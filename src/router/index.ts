@@ -1,5 +1,5 @@
 
-// ÒýÈëÐèÒªµÄÄ£¿é
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Ä£ï¿½ï¿½
 import { createRouter, createWebHistory } from "vue-router";
 import store from '../store/index.ts'
 import Main from "../views/Main.vue";
@@ -10,10 +10,12 @@ import Login from "../views/Login.vue"
 import Register from "../views/Register.vue"
 import UserEdit from "../views/UserEdit.vue"
 import Music from "../views/Music.vue"
-// ÏÂÃæÊ¹ÓÃÁËes6µÄ¶ÔÏóÔöÇ¿Ð´·¨£¬ÃüÃû±ØÐëÊÇroutes
+import Create from "../views/Create.vue"
+import Submit from "../views/Submit.vue"
+// ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½es6ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ï¿½Ç¿Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½routes
 const routes = [
   {
-    //Ä¬ÈÏÕ¹Ê¾£¬ÕâÊÇÖ÷Ò³ÃæÂ·ÓÉ±ØÐë¼ÓÐ±¸Ü /
+    //Ä¬ï¿½ï¿½Õ¹Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½Â·ï¿½É±ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ /
     path: "/",
     component: Main,
     redirect: '/home',
@@ -84,10 +86,21 @@ const routes = [
       props: true,
       component: Music,
     },
+    {
+      path: "/create",
+      name:"Create",
+      component: Create,
+      redirect: '/create/submit',
+      children:[{
+        path: "/create/submit",
+        name:"Submit",
+        component: Submit,
+      },
+    ]},
   ]},
 ];
  
-// ´´½¨Â·ÓÉ
+// ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½
 const router = createRouter({
   history: createWebHistory(),
   routes,
@@ -117,5 +130,5 @@ router.beforeEach((to, from, next) => {
   )
 })
 
-// µ¼³öÂ·ÓÉ
+// ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½
 export default router;

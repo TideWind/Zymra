@@ -184,11 +184,11 @@ const musicInfo = ref({
                 <div style="display:flex">
 
                       <div style="display:inline-block" >
-                        <el-image ref="record_bg" :class="{record_bg}" style="margin-left:300px; margin-top:165px; width: 370px; height: 370px" :src=record_img :fit="fit" />
-                        <el-avatar ref="record" :class="{record}" style="margin-left:125px; margin-top:145px" :size="240" :src="coverSrc" />
+                        <el-image ref="record_bg" :class="{record_bg}" style="margin-left:300px; margin-top:170px; width: 370px; height: 370px" :src=record_img :fit="fit" />
+                        <el-avatar ref="record" :class="{record}" style="margin-left:365px; margin-top:235px" :size="240" :src="coverSrc" />
                       </div>
 
-                      <div style="display:inline-block; margin-top:60px; margin-left: 140px;">
+                      <div style="display:inline-block; margin-top:60px; margin-left: 500px;">
                         <p style="font-weight: bold; font-size:26px">{{ musicInfo.music_name }}</p>
 
                         <p style="margin-top: -20px">
@@ -212,13 +212,13 @@ const musicInfo = ref({
 
               <el-button @click="onBtnShowClicked" :icon="ArrowUpBold" class="btnShow" color="#ea9800" size="large" style="font-size: 20px; margin-left:1435px" text plain />
 
-              <footer :class="{playbar:!isHideBar, hideBar:isHideBar}">
+              <footer :class="{playbar:!isHideBar, hideBar:isHideBar}" style="width:100%">
 
-                <div style="display: flex; justify-content: center">
-                  <el-slider v-model="playTime" class="progress" :format-tooltip="tooltipFormat" size="small" :max="sliderLength" style="width:1520px;" @change="changePlayTime" @input="inputPlayTime"/>
+                <div style="width:100%; display: flex; justify-content: center">
+                  <el-slider v-model="playTime" class="progress" :format-tooltip="tooltipFormat" size="small" :max="sliderLength" @change="changePlayTime" @input="inputPlayTime"/>
                 </div>
 
-                <el-card class="card" style="margin-top:-10px; width:1520px; height: 80px; display: flex; justify-content: center;">
+                <el-card class="card" style="margin-top:-10px; width:100%; height: 80px; display: flex; justify-content: center;">
 
                   <span style="display:inline-block; width:200px; font-size:12px; color: #888; margin-right:380px">
                       {{ timeFormat(playTime) }} / {{ timeFormat(sliderLength) }}
@@ -287,6 +287,7 @@ a{
   animation-play-state: paused;
 }
 
+.record,
 .record_bg{
   position:absolute;
   top: 0;
