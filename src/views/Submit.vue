@@ -10,6 +10,9 @@ onMounted(() =>{
 
 })
 
+const audioUpload = ref()
+const coverUpload = ref()
+
 const form = ref({
   name: '',
   album:'',
@@ -17,7 +20,8 @@ const form = ref({
   tags:[
   ],
   lyric: '',
-  cover:null,
+  cover: null,
+  audio: null
 })
 
 const tagTyping = ref<string>('')
@@ -49,37 +53,41 @@ const onDeleteTag = (tag:string) =>{
   form.value.tags.splice(form.value.tags.indexOf(tag), 1)
 }
 
-const handleCoverSuccess: UploadProps['onSuccess'] = (
-  response,
-  uploadFile
-) => {
-  form.value.cover = URL.createObjectURL(uploadFile.raw!)
-}
-
-const beforeCoverUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  if (!(rawFile.type == 'image/jpeg' || rawFile.type == 'image/png')) {
-    ElMessage.error('封面只能上传 JPG/PNG 格式!')
-    return false
-  } else if (rawFile.size / 1024 / 1024 > 10) {
-    ElMessage.error('封面大小不能超过 10MB!')
-    return false
-  }
-  return true
-}
-
-const beforeAudioUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  if (!(rawFile.type == 'audio/mpeg' || rawFile.type == 'audio/wav')) {
-    ElMessage.error('音频只能上传 MP3/WAV 格式!')
-    return false
-  } else if (rawFile.size / 1024 / 1024 > 128) {
-    ElMessage.error('音频大小不能超过 128MB!')
-    return false
-  }
-  return true
-}
-
 const onSubmit = () => {
-  console.log('submit!')
+  //audioUpload.value!.submit()
+  //coverUpload.value!.submit()
+  console.log(form.value)
+}
+
+const audioOnChange = (uploadFile, uploadFiles) => {
+  if (!(uploadFile.raw.type == 'audio/mpeg' || uploadFile.raw.type == 'audio/wav')) {
+    ElMessage.error('音频只能上传 MP3/WAV 格式!')
+    audioUpload.value!.clearFiles()
+    return false
+  } else if (uploadFile.raw.size / 1024 / 1024 > 128) {
+    ElMessage.error('音频大小不能超过 128MB!')
+    audioUpload.value!.clearFiles()
+    return false
+  }
+  console.log(uploadFile)
+  form.value.audio = uploadFile.raw
+}
+
+const coverSrc = ref()
+
+const coverOnChange = (uploadFile, uploadFiles) => {
+  if (!(uploadFile.raw.type == 'image/jpeg' || uploadFile.raw.type == 'image/png')) {
+    ElMessage.error('封面只能上传 JPG/PNG 格式!')
+    coverUpload.value!.clearFiles()
+    return false
+  } else if (uploadFile.raw.size / 1024 / 1024 > 10) {
+    ElMessage.error('封面大小不能超过 10MB!')
+    coverUpload.value!.clearFiles()
+    return false
+  }
+  console.log(uploadFile)
+  form.value.cover = uploadFile.raw
+  coverSrc.value = URL.createObjectURL(uploadFile.raw!)
 }
 
 </script>
@@ -91,10 +99,14 @@ const onSubmit = () => {
       <el-form :model="form" label-width="auto" style="max-width: 600px; margin-top: 60px">
 
         <el-upload
+          ref="audioUpload"
           class="upload-demo"
           drag
           :before-upload="beforeAudioUpload"
           :http-request="handleAudioUpload"
+          :auto-upload="false"
+          :limit="1"
+          :on-change="(uploadFile,uploadFiles) => audioOnChange(uploadFile,uploadFiles)"
         >
           <el-icon class="el-icon--upload"><upload-filled /></el-icon>
           <div class="el-upload__text">
@@ -108,15 +120,18 @@ const onSubmit = () => {
         <el-form-item style="margin-top:40px" label="音乐封面">
         <el-card style="width: 240px; height: 240px; --el-card-padding: 4px;" shadow="never">
           <el-upload
+            ref="coverUpload"
             class="avatar-uploader"
             action="#"
             :show-file-list="false"
             :on-success="handleCoverSuccess"
             :before-upload="beforeCoverUpload"
             :http-request="handleCoverUpload"
+            :auto-upload="false"
+            :on-change="(uploadFile,uploadFiles) => coverOnChange(uploadFile,uploadFiles)"
             @mouseenter="showIcon = true" @mouseleave="showIcon = false"
           >
-            <el-image style="width: 172px; height: 172px;" v-if="form.cover" :src="form.cover" class="avatar" :fit="cover" />
+            <el-image style="width: 232px; height: 232px;" v-if="form.cover" :src="coverSrc" class="avatar" :fit="cover" />
             <el-icon v-if="showIcon && form.cover" style="position:absolute;" class="avatar-edit-icon"><Edit /></el-icon>
             <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
           </el-upload>
