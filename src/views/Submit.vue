@@ -1,34 +1,82 @@
 <script setup lang="ts">
 import { ref, onMounted, inject, getCurrentInstance, reactive } from "vue"
-import { useRouter } from "vue-router";
-import store from '../store/index.ts';
-
-import upload_icon from '../assets/images/icon/upload_icon.vue'
-import data_icon from '../assets/images/icon/data_icon.vue'
 
 import { Plus, Edit, UploadFilled } from '@element-plus/icons-vue'
 
 import type { UploadProps } from 'element-plus'
-
-const router = useRouter();
+import { ElMessage } from 'element-plus'
 
 onMounted(() =>{
 
 })
 
-import { reactive } from 'vue'
-
-// do not use same name with ref
-const form = reactive({
+const form = ref({
   name: '',
   album:'',
   type:'',
-  tags:'',
+  tags:[
+  ],
   lyric: '',
   cover:null,
 })
 
-const tagTyping = ref("")
+const tagTyping = ref<string>('')
+
+const showIcon = ref(false)
+
+const onAddTag = () => {
+  
+  if(/^\s*$/.test(tagTyping.value))
+  {
+    ElMessage({message: '请输入标签！', type: 'error',})
+  }
+  else if(form.value.tags.length >= 10)
+  {
+    ElMessage({message: '标签数量不能超过10个！', type: 'error',})
+  }
+  else if(form.value.tags.indexOf(tagTyping.value) != -1)
+  {
+    ElMessage({message: '标签不能重复！', type: 'error',})
+  }
+  else
+  {
+    form.value.tags.push(tagTyping.value.trim())
+    tagTyping.value = ''
+  }
+}
+
+const onDeleteTag = (tag:string) =>{
+  form.value.tags.splice(form.value.tags.indexOf(tag), 1)
+}
+
+const handleCoverSuccess: UploadProps['onSuccess'] = (
+  response,
+  uploadFile
+) => {
+  form.value.cover = URL.createObjectURL(uploadFile.raw!)
+}
+
+const beforeCoverUpload: UploadProps['beforeUpload'] = (rawFile) => {
+  if (!(rawFile.type == 'image/jpeg' || rawFile.type == 'image/png')) {
+    ElMessage.error('封面只能上传 JPG/PNG 格式!')
+    return false
+  } else if (rawFile.size / 1024 / 1024 > 10) {
+    ElMessage.error('封面大小不能超过 10MB!')
+    return false
+  }
+  return true
+}
+
+const beforeAudioUpload: UploadProps['beforeUpload'] = (rawFile) => {
+  if (!(rawFile.type == 'audio/mpeg' || rawFile.type == 'audio/wav')) {
+    ElMessage.error('音频只能上传 MP3/WAV 格式!')
+    return false
+  } else if (rawFile.size / 1024 / 1024 > 128) {
+    ElMessage.error('音频大小不能超过 128MB!')
+    return false
+  }
+  return true
+}
 
 const onSubmit = () => {
   console.log('submit!')
@@ -38,22 +86,22 @@ const onSubmit = () => {
 
 <template>
   <el-container>
-    <el-card class="card" style="width:1080px; height: 1080px">
+    <el-card class="card" style="width:1080px;">
 
       <el-form :model="form" label-width="auto" style="max-width: 600px; margin-top: 60px">
 
         <el-upload
           class="upload-demo"
           drag
-          action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-          multiple
+          :before-upload="beforeAudioUpload"
+          :http-request="handleAudioUpload"
         >
           <el-icon class="el-icon--upload"><upload-filled /></el-icon>
           <div class="el-upload__text">
             拖拽到此处也可上传
           </div>
           <div class="container_justify">
-            <el-button style="width:140px; margin-top:20px; margin-bottom:30px" type="primary">上传音频</el-button>
+            <el-button style="width:140px; margin-top:20px; margin-bottom:30px" color="#FFA500" plain>上传音频</el-button>
           </div>
         </el-upload>
 
@@ -63,13 +111,13 @@ const onSubmit = () => {
             class="avatar-uploader"
             action="#"
             :show-file-list="false"
-            :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload"
-            :http-request="handleFileUpload"
+            :on-success="handleCoverSuccess"
+            :before-upload="beforeCoverUpload"
+            :http-request="handleCoverUpload"
             @mouseenter="showIcon = true" @mouseleave="showIcon = false"
           >
             <el-image style="width: 172px; height: 172px;" v-if="form.cover" :src="form.cover" class="avatar" :fit="cover" />
-            <el-icon v-if="form.cover" style="position:absolute;" class="avatar-edit-icon"><Edit /></el-icon>
+            <el-icon v-if="showIcon && form.cover" style="position:absolute;" class="avatar-edit-icon"><Edit /></el-icon>
             <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
           </el-upload>
         </el-card>
@@ -93,9 +141,13 @@ const onSubmit = () => {
         </el-form-item>
 
         <el-form-item label="音乐标签">
-          <el-input style="width:460px" v-model="tagTyping" />
-          <el-button style="margin-top:-60px; margin-left:470px; z-index:999">添加</el-button>
-          <p>{{ form.tags }}</p>
+          <div style="margin-bottom:-26px; ">
+            <el-input style="width:460px" v-model="tagTyping" />
+            <el-button @click="onAddTag" style="margin-top:-67px; margin-left:472px; z-index:999; --el-color-primary:#ffd04b" plain>添加</el-button>
+          </div>
+          <span v-for="(item, index) in form.tags" :key="item" style="display: inline-block; margin-top:10px; margin-right:10px">
+            <el-alert @close="onDeleteTag(item)" :title="item" type="info" style="padding-right:40px;" />
+          </span>
         </el-form-item>
 
         <el-form-item label="音乐歌词">
@@ -105,7 +157,7 @@ const onSubmit = () => {
       </el-form>
 
       <div class="container_justify">
-        <el-button style="width:100px; margin-top:20px" type="primary" @click="onSubmit">投稿</el-button>
+        <el-button color="#FFA500" style="width:100px; margin-top:20px; margin-bottom:60px" @click="onSubmit" plain>投稿</el-button>
       </div>
                   
     </el-card>
@@ -152,6 +204,22 @@ a{
   width: 230px;
   height: 230px;
   display: block;
+}
+
+.el-input{
+    --el-input-focus-border-color: #ffd04b;
+}
+
+.el-textarea {
+    --el-input-focus-border-color: #ffd04b;
+}
+
+.el-select {
+  --el-color-primary: #ffd04b !important;
+}
+
+.el-select-dropdown__item.is-selected {
+    color: #FFA500;
 }
 </style>
 

@@ -119,7 +119,7 @@ router.afterEach((to,from,next) => {
 router.beforeEach((to, from, next) => {
   store.commit('getAccessToken')
   const token = store.state.access_token
-  if (!token && (to.path == '/user' || to.path == '/follow' || to.path == '/create'))
+  if (!token && (to.path == '/user' || to.path == '/follow' || to.path == '/create' || to.path == '/create/submit'))
   {
     next({ path: '/login' })
   } else if (token && to.path == 'login') 
