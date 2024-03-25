@@ -8,21 +8,23 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 801,
-    // ÊÇ·ñ¿ªÆô https
+    // æ˜¯å¦å¼€å¯ https
     https: false,
-    cors: true, // ÔÊĞí¿çÓò
+    cors: true, // å…è®¸è·¨åŸŸ
     proxy: {
-      // ´øÑ¡ÏîĞ´·¨£ºhttp://localhost:5173/api/bar -> http://localhost:3000/bar
+      // å¸¦é€‰é¡¹å†™æ³•ï¼šhttp://localhost:5173/api/bar -> http://localhost:3000/bar
       '/api': {
         target: 'http://43.143.242.161:5050/api',
-        changeOrigin: true,//ÊÇ·ñ¿çÓò
-        rewrite: (path) => path.replace(/^\/api/, ''), // ·Ç±ØÒªÅäÖÃÏî, /api ÔÚÕæÕı·¢ËÍÍøÂçÇëÇóÊ±, »á±»Ìæ»»µô
+        changeOrigin: true,//æ˜¯å¦è·¨åŸŸ
+        rewrite: (path) => path.replace(/^\/api/, ''), // éå¿…è¦é…ç½®é¡¹, /api åœ¨çœŸæ­£å‘é€ç½‘ç»œè¯·æ±‚æ—¶, ä¼šè¢«æ›¿æ¢æ‰
       },
       '/banner': {
         target: 'https://zymra-1300854668.cos.ap-beijing.myqcloud.com',
-        changeOrigin: true,//ÊÇ·ñ¿çÓò
-        rewrite: (path) => path.replace(/^\/banner/, ''), // ·Ç±ØÒªÅäÖÃÏî, /api ÔÚÕæÕı·¢ËÍÍøÂçÇëÇóÊ±, »á±»Ìæ»»µô
+        changeOrigin: true,//æ˜¯å¦è·¨åŸŸ
+        rewrite: (path) => path.replace(/^\/banner/, ''), // éå¿…è¦é…ç½®é¡¹, /api åœ¨çœŸæ­£å‘é€ç½‘ç»œè¯·æ±‚æ—¶, ä¼šè¢«æ›¿æ¢æ‰
       }
-    }
+    },
+    keepAlive: true,
+    keepAliveTimeout: 600000 // 600ç§’åå…³é—­Keep-Aliveè¿æ¥
   }
 })

@@ -5,6 +5,7 @@ import store from '../store/index.ts';
 
 import upload_icon from '../assets/images/icon/upload_icon.vue'
 import data_icon from '../assets/images/icon/data_icon.vue'
+import file_icon from '../assets/images/icon/file_icon.vue'
 
 const router = useRouter();
 
@@ -26,7 +27,7 @@ onMounted(() =>{
         </el-menu-item>
 
         <el-menu-item index="1">
-          <el-icon><upload_icon /></el-icon>
+          <el-icon><file_icon /></el-icon>
           <span style="margin-left:20px">稿件</span>
         </el-menu-item>
 

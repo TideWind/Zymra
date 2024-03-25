@@ -4,7 +4,7 @@ import { ref, onMounted, inject, getCurrentInstance, reactive } from "vue"
 import { Plus, Edit, UploadFilled } from '@element-plus/icons-vue'
 
 import type { UploadProps } from 'element-plus'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElLoading } from 'element-plus'
 
 onMounted(() =>{
 
@@ -53,10 +53,63 @@ const onDeleteTag = (tag:string) =>{
   form.value.tags.splice(form.value.tags.indexOf(tag), 1)
 }
 
+const isSubmit = ref(false)
+
+const { proxy } = getCurrentInstance()
+
+let uploadMusic = async () => {
+  isSubmit.value = true
+  audioUpload.value!.submit()
+  coverUpload.value!.submit()
+  const formData = new FormData();
+  formData.append('audio', form.value.audio)
+  formData.append('cover', form.value.cover)
+  formData.append('name', form.value.name)
+  formData.append('album', form.value.album)
+  formData.append('type', form.value.type)
+  for(const tag of form.value.tags)
+  {
+    formData.append('tags', tag)
+  }
+  formData.append('lyric', form.value.lyric)
+  //console.log(formData.get('audio'))
+
+  //const loadingInstance = ElLoading.service({ fullscreen: true, text: '上传中...' });
+
+    try {
+        let res = await proxy.$api.uploadMusic(formData, { onUploadProgress: progressEvent => {
+        const { loaded, total } = progressEvent;
+        console.log(`Uploaded ${loaded}/${total}`); }
+        });
+        console.log(res.status)
+        console.log(res)
+        if (res.status == 200) {
+            ElMessage({ message: '投稿成功！请等待审核！', type: 'success' });
+        }
+    } catch (error) {
+        console.error('上传失败：', error);
+        
+        // 处理上传失败的情况
+    }
+     finally {
+        //loadingInstance.close();
+        isSubmit.value = false
+    }
+}
+
 const onSubmit = () => {
-  //audioUpload.value!.submit()
-  //coverUpload.value!.submit()
-  console.log(form.value)
+  uploadMusic()
+  //console.log(form.value)
+}
+
+const beforeAudioUpload = (rawFile) =>{
+  form.value.audio = rawFile
+  return false
+}
+
+const beforeCoverUpload = (rawFile) =>{
+  form.value.cover = rawFile
+  return false
 }
 
 const audioOnChange = (uploadFile, uploadFiles) => {
@@ -69,8 +122,8 @@ const audioOnChange = (uploadFile, uploadFiles) => {
     audioUpload.value!.clearFiles()
     return false
   }
-  console.log(uploadFile)
-  form.value.audio = uploadFile.raw
+  //console.log(uploadFile)
+  //form.value.audio = uploadFile.raw
 }
 
 const coverSrc = ref()
@@ -85,10 +138,12 @@ const coverOnChange = (uploadFile, uploadFiles) => {
     coverUpload.value!.clearFiles()
     return false
   }
-  console.log(uploadFile)
+  //console.log(uploadFile)
   form.value.cover = uploadFile.raw
   coverSrc.value = URL.createObjectURL(uploadFile.raw!)
 }
+
+const filelist = ref([])
 
 </script>
 
@@ -107,6 +162,7 @@ const coverOnChange = (uploadFile, uploadFiles) => {
           :auto-upload="false"
           :limit="1"
           :on-change="(uploadFile,uploadFiles) => audioOnChange(uploadFile,uploadFiles)"
+          :file-list="filelist"
         >
           <el-icon class="el-icon--upload"><upload-filled /></el-icon>
           <div class="el-upload__text">
@@ -172,7 +228,7 @@ const coverOnChange = (uploadFile, uploadFiles) => {
       </el-form>
 
       <div class="container_justify">
-        <el-button color="#FFA500" style="width:100px; margin-top:20px; margin-bottom:60px" @click="onSubmit" plain>投稿</el-button>
+        <el-button color="#FFA500" :loading="isSubmit" style="width:100px; margin-top:20px; margin-bottom:60px" @click="onSubmit" plain>投稿</el-button>
       </div>
                   
     </el-card>

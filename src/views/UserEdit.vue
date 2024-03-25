@@ -45,7 +45,7 @@ const { proxy } = getCurrentInstance()
 let handleFileUpload = async (rawFile) => {
   const formData = new FormData();
   formData.append('file', rawFile.file);
-  //console.log(rawFile.file)
+  //console.log(formData.get('file'))
   let res = await proxy.$api.uploadAvatar(formData)
   if (res.status == 200) {
     ElMessage({message: '头像已上传！', type: 'success',})

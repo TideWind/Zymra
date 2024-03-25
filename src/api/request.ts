@@ -5,29 +5,33 @@ import store from '../store/index.ts'
 import { useRouter } from 'vue-router';
 
 
-const NETWORK_ERROR = 'ÍøÂçÇëÇó´íÎó£¬ÇëÉÔºóÖØÊÔ...'
+const NETWORK_ERROR = 'ç½‘ç»œè¯·æ±‚é”™è¯¯ï¼Œè¯·ç¨åé‡è¯•...'
 
+axios.defaults.timeout = 100000000;
 
 const service = axios.create({
     baseURL: '/api',
+    timeout: 100000000, // è®¾ç½®è¶…æ—¶æ—¶é—´ä¸º1000æ¯«ç§’ï¼ˆ1ç§’ï¼‰
+    maxContentLength: 100000000,
+    maxBodyLength: 100000000
 })
 
 service.interceptors.request.use((req) => {
-    //¿ÉÒÔÔÚÇëÇóÖ®Ç°×öÒ»Ğ©ÊÂÇé
-    //±ÈÈç×Ô¶¨Òåheader£¬ jwt-tokenµÈµÈ
+    //å¯ä»¥åœ¨è¯·æ±‚ä¹‹å‰åšä¸€äº›äº‹æƒ…
+    //æ¯”å¦‚è‡ªå®šä¹‰headerï¼Œ jwt-tokenç­‰ç­‰
     return req
 })
 
 service.interceptors.response.use((res) => {
-    // ¶ÔÇëÇóµÃµ½µÄÏìÓ¦×öÒ»Ğ©´¦Àí
+    // å¯¹è¯·æ±‚å¾—åˆ°çš„å“åº”åšä¸€äº›å¤„ç†
     if (res.status === 200) {
-        // ×´Ì¬ÂëÊÇ200±íÃ÷ÇëÇóÕı³££¬¿ÉÒÔ·µ»ØÇëÇóµ½µÄÊı¾İÒ²¿ÉÒÔ×öÒ»Ğ©ÆäËûÊÂÇé
+        // çŠ¶æ€ç æ˜¯200è¡¨æ˜è¯·æ±‚æ­£å¸¸ï¼Œå¯ä»¥è¿”å›è¯·æ±‚åˆ°çš„æ•°æ®ä¹Ÿå¯ä»¥åšä¸€äº›å…¶ä»–äº‹æƒ…
         return res
     } else {
-        // ×´Ì¬Âë²»ÊÇ200ËµÃ÷ÇëÇó¿ÉÄÜ³ö´í
+        // çŠ¶æ€ç ä¸æ˜¯200è¯´æ˜è¯·æ±‚å¯èƒ½å‡ºé”™
         // ElMessage.error(NETWORK_ERROR)
         // return Promise.reject(NETWORK_ERROR)
-        // ÕâÀïµÄ·â×°²»ÍêÉÆ£¬Ö±½ÓÅ×³öÒì³£»áµ¼ÖÂÒ³Ãæ²»ÄÜÕı³£ÌáĞÑÓÃ»§£¬ÏÈÕâÑù·µ»Ø£¬ÒÔºóĞŞ¸Ä
+        // è¿™é‡Œçš„å°è£…ä¸å®Œå–„ï¼Œç›´æ¥æŠ›å‡ºå¼‚å¸¸ä¼šå¯¼è‡´é¡µé¢ä¸èƒ½æ­£å¸¸æé†’ç”¨æˆ·ï¼Œå…ˆè¿™æ ·è¿”å›ï¼Œä»¥åä¿®æ”¹
         return res
     }
 })
@@ -49,7 +53,7 @@ let tokenRefresher = async () => {
         if (res.status === 200) {
             store.commit('setAccessToken', res.data.access)
         } else if (res.status === 403) {
-            // refresh token¹ıÆÚÁË£¬ÒªÇóÖØĞÂµÇÂ¼
+            // refresh tokenè¿‡æœŸäº†ï¼Œè¦æ±‚é‡æ–°ç™»å½•
             store.commit('clearRefreshToken')
             store.commit('clearAccessToken')
             router.push({
@@ -60,16 +64,19 @@ let tokenRefresher = async () => {
 }
 
 function request(options) {
-    options.method = options.method || 'get' // Èç¹ûÃ»ÓĞ´«ÈëmethodÕâ¸ö²ÎÊı£¬¾ÍÄ¬ÈÏÊÇgetÇëÇó
+    options.method = options.method || 'get' // å¦‚æœæ²¡æœ‰ä¼ å…¥methodè¿™ä¸ªå‚æ•°ï¼Œå°±é»˜è®¤æ˜¯getè¯·æ±‚
     if (options.method.toLowerCase() === 'get') {
         // console.log(options)
         options.params = options.data
     }
-    // Èç¹û¿ÉÒÔ´ÓcookieÖĞ»ñÈ¡µ½access_token£¬¾ÍÌí¼Óµ½headerÖĞ
+    // å¦‚æœå¯ä»¥ä»cookieä¸­è·å–åˆ°access_tokenï¼Œå°±æ·»åŠ åˆ°headerä¸­
     if (Cookies.get('access_token')) {
-        // ÉèÖÃtokenÖ®Ç°ÏÈ¼ì²éÊÇ·ñĞèÒª¸üĞÂtoken
+        // è®¾ç½®tokenä¹‹å‰å…ˆæ£€æŸ¥æ˜¯å¦éœ€è¦æ›´æ–°token
         tokenRefresher()
         service.defaults.headers.common['Authorization'] = `Bearer ${Cookies.get('access_token')}`
+    }
+    if (options.onUploadProgress) {
+        options.onUploadProgress = options.onUploadProgress; 
     }
     return service(options)
 }

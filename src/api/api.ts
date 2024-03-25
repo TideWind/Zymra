@@ -57,4 +57,29 @@ export default {
             mock: false
         })
     },
+    // uploadMusic(params) {
+    //     return request({
+    //         url: '/Music/uploadMusic',
+    //         method: 'post',
+    //         data: params,
+    //         mock: false,
+    //     })
+    // },
+    uploadMusic(formData, onUploadProgress) { // 修改参数列表，添加 onUploadProgress
+        return request({
+            url: '/Music/uploadMusic',
+            method: 'post',
+            data: formData,
+            mock: false,
+            onUploadProgress // 将上传进度回调函数传递给请求
+        })
+    },
+    uploadAudio(params) {
+        return request({
+            url: '/Music/upload',
+            method: 'post',
+            data: params,
+            mock: false
+        })
+    },
 }
