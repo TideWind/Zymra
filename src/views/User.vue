@@ -1,17 +1,19 @@
 <script setup lang="ts">
-import { ref, onMounted, inject, getCurrentInstance } from "vue"
+import { ref, onMounted, inject, getCurrentInstance, defineProps } from "vue"
 import { useRouter } from "vue-router";
 import store from '../store/index.ts';
 import { Picture as IconPicture } from '@element-plus/icons-vue'
 
 const router = useRouter();
 
-onMounted(() =>{
-  getSelfUserAvatar()
-  getSelfUserInfo()
+const props = defineProps({
+    username: String
 })
 
-const { proxy } = getCurrentInstance()
+
+onMounted(() =>{
+  getUserInfo()
+})
 
 const userInfo = ref({
   userAvatar : ' ',
@@ -20,16 +22,10 @@ const userInfo = ref({
   userDescribe : ' ',
 })
 
-let getSelfUserAvatar = async () => {
-  let res = await proxy.$api.getSelfAvatar()
-  if (res.status == 200) {
-    const file = new File([res.data], 'avatar.jpg', { type: res.headers['content-type'] });
-    userInfo.value.userAvatar = URL.createObjectURL(file)
-  }
-}
+const { proxy } = getCurrentInstance()
 
-let getSelfUserInfo = async () => {
-  let res = await proxy.$api.getSelfUserInfo()
+let getUserInfo = async () => {
+  let res = await proxy.$api.getUserInfo(props.username)
   console.log(res)
   if (res.status == 200) {
     userInfo.value.userNickname = res.data.nickname
@@ -41,6 +37,7 @@ let getSelfUserInfo = async () => {
 const loginout = () => {
   store.commit('clearAccessToken')
   store.commit('clearRefreshToken')
+  store.commit('clearCurrentUsername')
   router.push({path: '/'})
 }
 
@@ -130,7 +127,7 @@ const likeMusics = ref([
 
                   <el-row style="margin-top: 30px; margin-bottom:40px;">
                     <el-card style="width: 180px; height: 180px; margin-left: 40px; --el-card-padding: 4px;" shadow="never">
-                      <el-image style="width: 172px; height: 172px;" :src="userInfo.userAvatar" :fit="cover">
+                      <el-image style="width: 172px; height: 172px;" :src="'/api/User/getAvatar/' + username" :fit="cover">
                         <template #error>
                           <div class="image-slot">
                             <el-icon><icon-picture /></el-icon>

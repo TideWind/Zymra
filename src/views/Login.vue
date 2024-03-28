@@ -56,6 +56,7 @@ let login_submit = async () => {
     //console.log(res)
     store.commit('setAccessToken', res.data.access_token)
     store.commit('setRefreshToken', res.data.refresh_token)
+    store.commit('setCurrentUsername', form.username)
     store.commit('updateLastRefreshTime')  // 更新最近一次刷新access token的时间，用于比较access token是否过期，这里要和jwt的内容联系起来看
     isLoading.value = false
     router.push({ // 跳转到主页面，

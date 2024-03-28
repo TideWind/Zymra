@@ -20,6 +20,8 @@ const form = ref({
   tags:[
   ],
   lyric: '',
+  length_minute: 0,
+  length_second: 0,
   cover: null,
   audio: null
 })
@@ -102,8 +104,30 @@ const onSubmit = () => {
   //console.log(form.value)
 }
 
-const beforeAudioUpload = (rawFile) =>{
+const getAudioDuration = (rawFile) => {
+  return new Promise((resolve, reject) => {
+    const audio = new Audio();
+    audio.src = URL.createObjectURL(rawFile);
+
+    audio.onloadedmetadata = () => {
+      URL.revokeObjectURL(audio.src); // 释放资源
+      resolve(audio.duration);
+    };
+
+    audio.onerror = (error) => {
+      reject(error);
+    };
+  });
+};
+
+const beforeAudioUpload = async (rawFile) =>{
   form.value.audio = rawFile
+  const duration:number = await getAudioDuration(rawFile);
+  let length_minute = parseInt(duration / 60 + '')
+  let length_second = parseInt(duration % 60 + '')
+  form.value.length_minute = length_minute
+  form.value.length_second = length_second
+  //console.log(length_minute, length_second)
   return false
 }
 

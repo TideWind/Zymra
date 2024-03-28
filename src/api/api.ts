@@ -34,17 +34,9 @@ export default {
             mock: false
         })
     },
-    getSelfAvatar(params) {
+    getUserInfo(params) {
         return request({
-            url: '/User/getSelfAvatar',
-            method: 'get',
-            responseType: 'blob',
-            mock: false
-        })
-    },
-    getSelfUserInfo(params) {
-        return request({
-            url: '/User/getSelfUserInfo',
+            url: '/User/getUserInfo/' + params,
             method: 'get',
             mock: false
         })
@@ -57,21 +49,13 @@ export default {
             mock: false
         })
     },
-    // uploadMusic(params) {
-    //     return request({
-    //         url: '/Music/uploadMusic',
-    //         method: 'post',
-    //         data: params,
-    //         mock: false,
-    //     })
-    // },
-    uploadMusic(formData, onUploadProgress) { // ÐÞ¸Ä²ÎÊýÁÐ±í£¬Ìí¼Ó onUploadProgress
+    uploadMusic(formData, onUploadProgress) { // ï¿½Þ¸Ä²ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ onUploadProgress
         return request({
             url: '/Music/uploadMusic',
             method: 'post',
             data: formData,
             mock: false,
-            onUploadProgress // ½«ÉÏ´«½ø¶È»Øµ÷º¯Êý´«µÝ¸øÇëÇó
+            onUploadProgress // ï¿½ï¿½ï¿½Ï´ï¿½ï¿½ï¿½ï¿½È»Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¸ï¿½ï¿½ï¿½ï¿½ï¿½
         })
     },
     uploadAudio(params) {
@@ -79,6 +63,13 @@ export default {
             url: '/Music/upload',
             method: 'post',
             data: params,
+            mock: false
+        })
+    },
+    getMusics(params) {
+        return request({
+            url: '/Music',
+            method: 'get',
             mock: false
         })
     },

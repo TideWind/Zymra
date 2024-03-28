@@ -61,8 +61,9 @@ const routes = [
       component: NotFound,
     },
     {
-      path: "/user",
+      path: "/user/:username",
       name:"User",
+      props: true,
       component: User,
     },
     {
@@ -113,6 +114,12 @@ router.afterEach((to,from,next) => {
   if(to.path == from.path){
     window.location.reload();
   }
+  if(to.path == '/home' && from.path == '/login'){
+    window.location.reload();
+  }
+  if(Cookies.get('current_username')==null && to.path == '/home' && from.name == 'User'){
+    window.location.reload();
+  }
   
 });
 
@@ -122,7 +129,7 @@ router.beforeEach((to, from, next) => {
   if (!token && (to.path == '/user' || to.path == '/follow' || to.path == '/create' || to.path == '/create/submit'))
   {
     next({ path: '/login' })
-  } else if (token && to.path == 'login') 
+  } else if (token && to.path == '/login') 
   {
     next({ path: '/user' })
   } else (

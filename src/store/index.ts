@@ -1,19 +1,20 @@
-import { createStore } from 'vuex'  // ÒıÈëcreateStore£¬ ÕâÀï¸úvue2²»Ò»Ñù
+import { createStore } from 'vuex'  // å¼•å…¥createStoreï¼Œ è¿™é‡Œè·Ÿvue2ä¸ä¸€æ ·
 import Cookies from "js-cookie"
 
 
 export default createStore({
     state: {
-        // stateÀïÃæ¶¨ÒåÁËÒ»Ğ©ÒªÊ¹ÓÃµÄ±äÁ¿
+        // stateé‡Œé¢å®šä¹‰äº†ä¸€äº›è¦ä½¿ç”¨çš„å˜é‡
         access_token: '',
         refresh_token: '',
-        last_token_refresh_time: new Date("October 01, 1975 00:00:00"),  // ÒÔ1975-10-01 00:00:00 Îª³õÊ¼Öµ
+        current_username: '',
+        last_token_refresh_time: new Date("October 01, 1975 00:00:00"),  // ä»¥1975-10-01 00:00:00 ä¸ºåˆå§‹å€¼
     },
     mutations: {
-        // mutationsÀïÃæÖ÷ÒªÊÇÕë¶ÔstateÀïÃæµÄ±äÁ¿½øĞĞÒ»Ğ©²Ù×÷µÄº¯Êı£¬
-        //  ÔÚµÇÂ¼Õâ¸ö³¡¾°ÖĞ£¬·Ö±ğ¶Ôaccess tokenºÍrefresh tokenÓĞÉèÖÃ£¨set£©¡¢Çå³ı£¨clear£©ºÍ»ñÈ¡£¨get£©3¸ö²Ù×÷£¬Ò»¹²6¸ö
-        // ¶îÍâ»¹ÓĞÒ»¸ö¸üĞÂaccess tokenµÄº¯Êı
-        // access token ºÍ refresh token ÎÒÃÇÊÇ´æ´¢ÔÚcookieÖĞ£¬Õâ¸öºÜ¼òµ¥£¬¿´´úÂë¾ÍÄÜÀí½âÁË£¬ÏëÒªÉîÈëÁË½âµÄĞèÒª×ÔĞĞËÑË÷
+        // mutationsé‡Œé¢ä¸»è¦æ˜¯é’ˆå¯¹stateé‡Œé¢çš„å˜é‡è¿›è¡Œä¸€äº›æ“ä½œçš„å‡½æ•°ï¼Œ
+        //  åœ¨ç™»å½•è¿™ä¸ªåœºæ™¯ä¸­ï¼Œåˆ†åˆ«å¯¹access tokenå’Œrefresh tokenæœ‰è®¾ç½®ï¼ˆsetï¼‰ã€æ¸…é™¤ï¼ˆclearï¼‰å’Œè·å–ï¼ˆgetï¼‰3ä¸ªæ“ä½œï¼Œä¸€å…±6ä¸ª
+        // é¢å¤–è¿˜æœ‰ä¸€ä¸ªæ›´æ–°access tokençš„å‡½æ•°
+        // access token å’Œ refresh token æˆ‘ä»¬æ˜¯å­˜å‚¨åœ¨cookieä¸­ï¼Œè¿™ä¸ªå¾ˆç®€å•ï¼Œçœ‹ä»£ç å°±èƒ½ç†è§£äº†ï¼Œæƒ³è¦æ·±å…¥äº†è§£çš„éœ€è¦è‡ªè¡Œæœç´¢
         setAccessToken(state, val) {
             state.access_token = val
             Cookies.set('access_token', val)
@@ -24,6 +25,17 @@ export default createStore({
         },
         getAccessToken(state) {
             state.access_token = state.access_token || Cookies.get('access_token')
+        },
+        setCurrentUsername(state, val) {
+            state.current_username = val
+            Cookies.set('current_username', val)
+        },
+        clearCurrentUsername(state) {
+            state.current_username = ''
+            Cookies.remove('current_username')
+        },
+        getCurrentUsername(state) {
+            state.current_username = state.current_username || Cookies.get('current_username')
         },
         setRefreshToken(state, val) {
             state.refresh_token = val

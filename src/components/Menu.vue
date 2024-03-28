@@ -28,15 +28,25 @@
           placeholder="搜索音乐/用户"
           :prefix-icon="Search"
         />
-      <el-menu-item index="/user">个人中心</el-menu-item>
+      <el-menu-item :index="'/user' + username" @click="getSelfUsername">个人中心</el-menu-item>
     </el-menu>
   </template>
   
   <script lang="ts" setup>
-  import { ref, watch } from 'vue'
+  import { ref, watch, onMounted, getCurrentInstance } from 'vue'
   import { Search } from '@element-plus/icons-vue'
+  import Cookies from 'js-cookie'
+
   const input_search = ref('')
- 
+
+  onMounted(() =>{
+    //getSelfUsername()
+  })
+
+  const { proxy } = getCurrentInstance()
+
+  const username = ref(Cookies.get('current_username')==null ? '' : '/' + Cookies.get('current_username'))
+
   const handleSelect = (key: string, keyPath: string[]) => {
     //console.log(key, keyPath)
   }

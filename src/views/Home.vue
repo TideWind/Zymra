@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, inject  } from "vue"
+import { ref, onMounted, computed, getCurrentInstance  } from "vue"
 import ColorThief from 'colorthief/dist/color-thief.mjs'
+
+onMounted(() =>{
+  getMusics()
+})
 
 const banner_images = ref([
   "/banner/1.png",
@@ -263,10 +267,17 @@ const view_electron_outputValue = useTransition(view_electron, {
   duration: 1000,
 })
 
-const axios = inject('$axios')
-const response = await axios.get('/api/Music')
-var display_chart = response.data;
-//console.log(display_chart);
+const display_chart = ref()
+
+const { proxy } = getCurrentInstance()
+
+let getMusics = async () => {
+  let res = await proxy.$api.getMusics()
+  if (res.status == 200) {
+    display_chart.value = res.data;
+    console.log(display_chart)
+  }
+}
 
 
 </script>
