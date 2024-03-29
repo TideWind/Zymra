@@ -405,10 +405,10 @@ let getMusics = async () => {
                 </div>
                 <el-divider />
                 <el-row :gutter="0" v-for="(item, index) in display_chart" :key="index">
-                    <router-link :to="'/music/' + item.mid" style="display: flex; align-items: center; margin-bottom:24px">
+                    <router-link :to="'/music/' + item.musicId" style="display: flex; align-items: center; margin-bottom:24px">
                       <p style="margin-right: 10px; font-size: 20px; font-weight: bold;">{{index + 1}}</p>
                       <el-image
-                        :src="getImagesSrc(item.src)"
+                        :src="'/api/Music/Cover/' + item.musicId"
                         style="width:80px; height: 80px"
                         fit="cover"
                       />
@@ -418,6 +418,9 @@ let getMusics = async () => {
                       </div>
                     </router-link>
                 </el-row>
+                <router-link :to="{path: '/rank'}">
+                    <p style="font-size: 14px; color: #888; text-align:center">查看更多</p>
+                  </router-link>
               </el-card>
             </el-aside>
           </el-container>

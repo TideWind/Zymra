@@ -2,6 +2,7 @@
 import { ref, onMounted, inject, getCurrentInstance, reactive } from "vue"
 import { useRouter } from "vue-router";
 import store from '../store/index.ts';
+import Cookies from 'js-cookie'
 
 const router = useRouter();
 
@@ -26,7 +27,7 @@ const handleAvatarSuccess: UploadProps['onSuccess'] = (
   response,
   uploadFile
 ) => {
-  userInfo.value.userAvatar = URL.createObjectURL(uploadFile.raw!)
+  isHasAvatar.value = true
 }
 
 const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
@@ -42,6 +43,8 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
 
 const { proxy } = getCurrentInstance()
 
+const isHasAvatar = ref(false)
+
 let handleFileUpload = async (rawFile) => {
   const formData = new FormData();
   formData.append('file', rawFile.file);
@@ -53,15 +56,20 @@ let handleFileUpload = async (rawFile) => {
 }
 
 let getSelfUserAvatar = async () => {
-  let res = await proxy.$api.getSelfAvatar()
+  let res = await proxy.$api.getUserAvatar(Cookies.get('current_username'))
+  //console.log(res)
   if (res.status == 200) {
-    const file = new File([res.data], 'avatar.jpg', { type: res.headers['content-type'] });
-    userInfo.value.userAvatar = URL.createObjectURL(file)
+    isHasAvatar.value = true
   }
+  else
+  {
+    isHasAvatar.value = false
+  }
+  console.log(isHasAvatar.value)
 }
 
 let getSelfUserInfo = async () => {
-  let res = await proxy.$api.getSelfUserInfo()
+  let res = await proxy.$api.getUserInfo(Cookies.get('current_username'))
   //console.log(res)
   if (res.status == 200) {
     userInfo.value.userNickname = res.data.nickname
@@ -79,7 +87,7 @@ let uploadUserInfo = async () => {
   let res = await proxy.$api.uploadUserInfo(form)
   if (res.status == 200) {
     ElMessage({message: '个人资料已保存！', type: 'success',})
-    router.push({path: '/user'});
+    router.push({path: '/user/' + Cookies.get('current_username')});
   } 
 }
 
@@ -104,8 +112,8 @@ const showIcon = ref(false);
                         :http-request="handleFileUpload"
                         @mouseenter="showIcon = true" @mouseleave="showIcon = false"
                       >
-                        <el-image style="width: 172px; height: 172px;" v-if="userInfo.userAvatar" :src="userInfo.userAvatar" class="avatar" :fit="cover" />
-                        <el-icon v-if="showIcon && userInfo.userAvatar" style="position:absolute;" class="avatar-edit-icon"><Edit /></el-icon>
+                        <el-image style="width: 172px; height: 172px;" v-if="isHasAvatar" :src="'/api/User/Avatar/' + Cookies.get('current_username')" class="avatar" :fit="cover" />
+                        <el-icon v-if="showIcon && isHasAvatar" style="position:absolute;" class="avatar-edit-icon"><Edit /></el-icon>
                         <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
                         
                       </el-upload>
@@ -169,8 +177,8 @@ a{
 }
 
 .avatar-uploader .avatar {
-  width: 171px;
-  height: 171px;
+  width: 172px;
+  height: 172px;
   display: block;
 }
 </style>
@@ -190,10 +198,11 @@ a{
 }
 
 .el-icon.avatar-uploader-icon {
+  /* margin-top:-60px; */
   font-size: 28px;
   color: #8c939d;
-  width: 172px;
-  height: 172px;
+  width: 172px !important;
+  height: 172px !important;
   text-align: center;
 }
 

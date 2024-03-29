@@ -127,7 +127,7 @@ const likeMusics = ref([
 
                   <el-row style="margin-top: 30px; margin-bottom:40px;">
                     <el-card style="width: 180px; height: 180px; margin-left: 40px; --el-card-padding: 4px;" shadow="never">
-                      <el-image style="width: 172px; height: 172px;" :src="'/api/User/getAvatar/' + username" :fit="cover">
+                      <el-image style="width: 172px; height: 172px;" :src="'/api/User/Avatar/' + username" :fit="cover">
                         <template #error>
                           <div class="image-slot">
                             <el-icon><icon-picture /></el-icon>

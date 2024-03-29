@@ -13,10 +13,10 @@ import Footer from '../components/Footer.vue'
         
             <router-view v-slot="{ Component }">
               <template v-if="Component">
-                <Transition>
+
                   <KeepAlive>
                     <suspense>
-                      <Transition>
+                      <Transition name="fade">
                         <component :is="Component"></component>
                       </Transition>
                       <template #fallback>
@@ -28,7 +28,7 @@ import Footer from '../components/Footer.vue'
                       </template>
                     </suspense>
                   </KeepAlive>
-                </Transition>
+
               </template>
             </router-view>
 
@@ -59,13 +59,11 @@ import Footer from '../components/Footer.vue'
   background-color: rgb(245,245,245);
 }
 
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 0.5s ease;
+.fade-enter-active, .fade-leave-active {
+  transition: all 0.5s;
+ 
 }
-
-.v-enter-from,
-.v-leave-to {
-  opacity: 0;
+.fade-enter, .fade-leave-to {
+    opacity: 0;
 }
 </style>

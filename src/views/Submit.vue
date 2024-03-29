@@ -6,6 +6,8 @@ import { Plus, Edit, UploadFilled } from '@element-plus/icons-vue'
 import type { UploadProps } from 'element-plus'
 import { ElMessage, ElLoading } from 'element-plus'
 
+import SubmitSuccess from "../components/SubmitSuccess.vue"
+
 onMounted(() =>{
 
 })
@@ -20,8 +22,6 @@ const form = ref({
   tags:[
   ],
   lyric: '',
-  length_minute: 0,
-  length_second: 0,
   cover: null,
   audio: null
 })
@@ -56,6 +56,7 @@ const onDeleteTag = (tag:string) =>{
 }
 
 const isSubmit = ref(false)
+const isSubmitSuccess = ref(false)
 
 const { proxy } = getCurrentInstance()
 
@@ -69,6 +70,14 @@ let uploadMusic = async () => {
   formData.append('name', form.value.name)
   formData.append('album', form.value.album)
   formData.append('type', form.value.type)
+
+  const duration:number = await getAudioDuration(form.value.audio);
+  let length_minute = parseInt(duration / 60 + '')
+  let length_second = parseInt(duration % 60 + '')
+
+  formData.append('length_minute', length_minute)
+  formData.append('length_second', length_second)
+
   for(const tag of form.value.tags)
   {
     formData.append('tags', tag)
@@ -85,8 +94,9 @@ let uploadMusic = async () => {
         });
         console.log(res.status)
         console.log(res)
-        if (res.status == 200) {
+        if (res.status == 201) {
             ElMessage({ message: '投稿成功！请等待审核！', type: 'success' });
+            isSubmitSuccess.value = true
         }
     } catch (error) {
         console.error('上传失败：', error);
@@ -122,12 +132,6 @@ const getAudioDuration = (rawFile) => {
 
 const beforeAudioUpload = async (rawFile) =>{
   form.value.audio = rawFile
-  const duration:number = await getAudioDuration(rawFile);
-  let length_minute = parseInt(duration / 60 + '')
-  let length_second = parseInt(duration % 60 + '')
-  form.value.length_minute = length_minute
-  form.value.length_second = length_second
-  //console.log(length_minute, length_second)
   return false
 }
 
@@ -164,7 +168,7 @@ const coverOnChange = (uploadFile, uploadFiles) => {
   }
   //console.log(uploadFile)
   form.value.cover = uploadFile.raw
-  coverSrc.value = URL.createObjectURL(uploadFile.raw!)
+  coverSrc.value = URL.createObjectURL(uploadFile.raw)
 }
 
 const filelist = ref([])
@@ -172,7 +176,8 @@ const filelist = ref([])
 </script>
 
 <template>
-  <el-container>
+  <SubmitSuccess v-if="isSubmitSuccess" />
+  <el-container v-else>
     <el-card class="card" style="width:1080px;">
 
       <el-form :model="form" label-width="auto" style="max-width: 600px; margin-top: 60px">

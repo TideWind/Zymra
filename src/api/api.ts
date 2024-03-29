@@ -41,6 +41,13 @@ export default {
             mock: false
         })
     },
+    getUserAvatar(params) {
+        return request({
+            url: '/User/Avatar/' + params,
+            method: 'get',
+            mock: false
+        })
+    },
     uploadUserInfo(params) {
         return request({
             url: '/User/uploadUserInfo',

@@ -1,6 +1,7 @@
 
 // ������Ҫ��ģ��
 import { createRouter, createWebHistory } from "vue-router";
+import Cookies from "js-cookie"
 import store from '../store/index.ts'
 import Main from "../views/Main.vue";
 import NotFound from "../views/NotFound.vue";
@@ -114,7 +115,7 @@ router.afterEach((to,from,next) => {
   if(to.path == from.path){
     window.location.reload();
   }
-  if(to.path == '/home' && from.path == '/login'){
+  if(Cookies.get('current_username')!=null && to.path == '/home' && from.path == '/login'){
     window.location.reload();
   }
   if(Cookies.get('current_username')==null && to.path == '/home' && from.name == 'User'){

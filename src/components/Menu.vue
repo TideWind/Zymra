@@ -11,7 +11,7 @@
       active-text-color="#ffd04b"
       @select="handleSelect"
     >
-      <router-link to='/' @click="clickHome">
+      <router-link to='/home' @click="clickHome">
         <img src="../assets/zymra_logo.svg" class="logo" alt="Zymra logo" />
       </router-link>
       <el-sub-menu>
