@@ -17,7 +17,7 @@ import record_img from '../assets/images/record.svg'
 
 const router = useRouter();
 
-defineProps({
+const props = defineProps({
     music_id: String
 })
 
@@ -25,6 +25,7 @@ const intervalId = ref();
 
 onMounted(() =>{
   intervalId.value = setInterval(updatePlayTimePerTime, 1)
+  getMusicInfo();
 })
 
 onBeforeUnmount(() => {
@@ -40,6 +41,8 @@ const record_bg = ref()
 let play_icon = ref(music_play_icon)
 let volume_icon = ref(volume_on_icon)
 
+const isCanPlay = ref(false)
+
 const isOnPlay = ref(false)
 const isLike = ref(false)
 const isMute = ref(false)
@@ -53,6 +56,7 @@ const sliderLength = ref(100.00)
 const voicePower = ref(0.5);
 
 const canPlay = () => {
+  isCanPlay.value = true
   sliderLength.value = musicAudio.value.duration
   musicAudio.value.volume = voicePower.value
 }
@@ -162,19 +166,31 @@ const timeFormat = (length:number) =>
 }
 
 const musicInfo = ref({
-  music_id : '123',
-  music_name : '過去を喰らう',
+  music_name : '',
   music_audio : '',
   music_cover : '',
-  music_class : '流行',
-  music_length : 241,
-  music_album : '不可解',
-  music_authors : [
-    '花譜',
-    '黑柿子'
-  ],
-  music_lyric :'愛した理由も忘れちゃって　過食気味の胸で泣いちゃって\n肌の色すら 見えなくなっている\n自分だけ傷づいたつもりで　悪いのは誰かだと思って\n足が抜け落ちたのも　気づかない\n夢や希望はなんだった？　やりたいことはこれだった？\n過去が僕らを待っている　貪欲な顔で待っている\n侘しさも　悲しみもなければ\n夜が死ぬたび　歌なんて歌わなかった\nあなたの笑顔がここにあるなら　諦めなんてしなかったんだ\nあなたの言葉を思い出すから　慰めなんていらなかった\n生きる意味ばかり思い出すから　優しさを常に疑った\nあなたの涙を見て笑えたら　今更恥など知らなかった\nウグイスが鳴いて　破り捨てた卒業証書が\n夜空になって舞ってった　過去を喰らい尽くした\n反抗期だと疎まれた子供たちは復讐に走り\n意味にすがる腑抜けた大人たちは歌を歌いたがる\n若さを強いて貪る惰眠　気づけば爪が剥がれ落ちる\n雨が好きだった理由も　好きな歌も忘れ去った\n心に響くのは物ばかり　それなのに人が恋しくって\nあなたへの気持ちだけ　今も終わらないんだ\n例えば僕らが街で出会って　夢のような話を紡げたら\nあなたと僕は笑えるだろうか\n画面の中であなたに会えたら　思い出すのは後悔ばかりだ\n今でも愛しいよ　あの頃に今も戻りたいよ\nこんな大人で我慢できたら　苦しみなんて知らなかった\n言葉ですべて解決するなら　ここまで涙は出なかった\nあなたが頭で渦を巻くから　今もこの朝が嫌いだった\n大人になるのが怖かった　強くなることが怖かった\nウグイスが鳴いて　ゴミになった制服が\n夜空になって舞ってった　過去を喰らい尽くした'
+  music_length : 0,
+  music_album : '',
+  music_authors : [],
+  music_authors_id : [],
+  music_lyric :''
 })
+
+let getMusicInfo = async () => {
+  let res = await proxy.$api.getMusicInfo(props.music_id)
+  if (res.status == 200) {
+    musicInfo.value.music_name = res.data.name
+    musicInfo.value.music_album = res.data.album
+    musicInfo.value.music_authors.push(...res.data.users.map(item => item.nickname))
+    musicInfo.value.music_authors_id.push(...res.data.users.map(item => item.username))
+    musicInfo.value.music_lyric = res.data.lyric
+    const [hours, minutes, seconds] = res.data.length.split(':').map(Number);
+    musicInfo.value.music_length = minutes * 60 + seconds
+    sliderLength.value = musicInfo.value.music_length
+
+    console.log(musicInfo.value.music_length)
+  }
+}
 
 </script>
 
@@ -184,8 +200,8 @@ const musicInfo = ref({
                 <div style="display:flex">
 
                       <div style="display:inline-block" >
-                        <el-image ref="record_bg" :class="{record_bg}" style="margin-left:300px; margin-top:170px; width: 370px; height: 370px" :src=record_img :fit="fit" />
-                        <el-avatar ref="record" :class="{record}" style="margin-left:365px; margin-top:235px" :size="240" :src="coverSrc" />
+                        <el-image ref="record_bg" :class="{record_bg}" style="margin-left:300px; margin-top:170px; width: 370px; height: 370px" src="/banner/record.svg" :fit="fit" />
+                        <el-avatar ref="record" :class="{record}" style="margin-left:365px; margin-top:235px" :size="240" :src="'/api/Music/Cover/' + music_id" />
                       </div>
 
                       <div style="display:inline-block; margin-top:60px; margin-left: 500px;">
@@ -196,7 +212,9 @@ const musicInfo = ref({
                           <span style="font-size:16px; margin-left:20px; color: #888">作者：</span>
                           <span v-for="(item, index) in musicInfo.music_authors" :key="index">
                             <span v-if="index != 0" style="font-size:16px; color: #888"> / </span>
-                            <span style="font-size:16px; color: #888">{{ item }}</span>
+                            <router-link :to="'/user/' + musicInfo.music_authors_id[index]">
+                              <span style="font-size:16px; color: #888">{{ item }}</span>
+                            </router-link>
                           </span>
                         </p>
                         <el-scrollbar height="300px" style="margin-bottom:90px; margin-top:10px">
@@ -206,7 +224,7 @@ const musicInfo = ref({
                         </el-scrollbar>
                       </div>
 
-                      <audio ref="musicAudio" class="audio-component" :src=musicSource controls preload="auto" @canplay="canPlay" />
+                      <audio ref="musicAudio" class="audio-component" :src="'/api/Music/Audio/' + music_id" controls preload="auto" @canplay="canPlay" />
                 </div>
               </el-card>
 
@@ -226,9 +244,9 @@ const musicInfo = ref({
 
                   <el-button @click="onBtnLickClicked" :class="{liked:isLike, btn:!isLike}" :icon="like_icon" color="#ea9800" size="large" style="font-size: 20px;" text plain />
                   <el-button :icon="music_back_icon" class="btn" color="#ea9800" size="large" style="font-size: 20px;" text plain />
-                  <el-button @click="onBtnPlayClicked" class="btn" :icon="play_icon" color="#ea9800" size="large" style="font-size: 20px;" circle plain />
+                  <el-button @click="onBtnPlayClicked" :loading="!isCanPlay" class="btn" :icon="play_icon" color="#ea9800" size="large" style="font-size: 20px;" circle plain />
                   <el-button :icon="music_forward_icon" class="btn" color="#ea9800" size="large" style="font-size: 20px;" text plain />
-                  <a :href="musicSource" :download="musicInfo.music_name + '.mp3'">
+                  <a :href="'/api/Music/Audio/' + music_id" :download="musicInfo.music_name + '.mp3'">
                     <el-button :icon="download_icon" class="btn" color="#ea9800" size="large" style="font-size: 20px;" text plain />
                   </a> 
 
@@ -352,7 +370,7 @@ a{
 }
 
 .audio-component {
-  display: none;
+  display:none;
 }
 
 </style>

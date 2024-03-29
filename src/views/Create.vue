@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, inject, getCurrentInstance, reactive } from "vue"
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import store from '../store/index.ts';
 
 import upload_icon from '../assets/images/icon/upload_icon.vue'
@@ -10,28 +10,30 @@ import file_icon from '../assets/images/icon/file_icon.vue'
 const router = useRouter();
 
 onMounted(() =>{
-
+  const { path } = useRoute(); // 获取当前路径
+  activeMenu.value = path; // 将当前路径和激活菜单绑定
+  console.log(activeMenu.value)
 })
 
-
+const activeMenu = ref<string>("");;
 </script>
 
 <template>
   <el-container>
     <el-aside width="200px">
-      <el-menu default-active="0" active-text-color="#ea9800" style="height:100%">
+      <el-menu router=true :default-active="activeMenu" active-text-color="#ea9800" style="height:100%">
 
-        <el-menu-item index="0">
+        <el-menu-item index="/create/submit">
           <el-icon><upload_icon /></el-icon>
           <span style="margin-left:20px">投稿</span>
         </el-menu-item>
 
-        <el-menu-item index="1">
+        <el-menu-item index="/create/works">
           <el-icon><file_icon /></el-icon>
           <span style="margin-left:20px">稿件</span>
         </el-menu-item>
 
-        <el-menu-item index="2">
+        <el-menu-item index="/create/data">
           <el-icon><data_icon /></el-icon>
           <span style="margin-left:20px">数据</span>
         </el-menu-item>

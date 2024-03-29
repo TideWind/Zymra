@@ -13,10 +13,11 @@ import UserEdit from "../views/UserEdit.vue"
 import Music from "../views/Music.vue"
 import Create from "../views/Create.vue"
 import Submit from "../views/Submit.vue"
-// ����ʹ����es6�Ķ�����ǿд��������������routes
+import Works from "../views/Works.vue"
+import Data from "../views/Data.vue"
+
 const routes = [
   {
-    //Ĭ��չʾ��������ҳ��·�ɱ����б�� /
     path: "/",
     component: Main,
     redirect: '/home',
@@ -52,8 +53,9 @@ const routes = [
       component: NotFound,
     },
     {
-      path: "/follow",
+      path: "/follow/:username",
       name:"Follow",
+      props: true,
       component: NotFound,
     },
     {
@@ -98,11 +100,21 @@ const routes = [
         name:"Submit",
         component: Submit,
       },
+      {
+        path: "/create/works",
+        name:"Works",
+        component: Works,
+      },
+      {
+        path: "/create/data",
+        name:"Data",
+        component: Data,
+      },
     ]},
   ]},
 ];
  
-// ����·��
+
 const router = createRouter({
   history: createWebHistory(),
   routes,
@@ -138,5 +150,5 @@ router.beforeEach((to, from, next) => {
   )
 })
 
-// ����·��
+
 export default router;

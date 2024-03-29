@@ -80,4 +80,11 @@ export default {
             mock: false
         })
     },
+    getMusicInfo(params) {
+        return request({
+            url: '/Music/getMusicInfo/' + params,
+            method: 'get',
+            mock: false
+        })
+    },
 }

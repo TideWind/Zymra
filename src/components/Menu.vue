@@ -3,7 +3,7 @@
       :default-active="activeMenu"
       ref="menu"
       id="menu"
-      router="true"
+      router=true
       class="menu"
       mode="horizontal"
       background-color="#2D2D2D"
@@ -20,14 +20,14 @@
         <el-menu-item index="/rank">排行榜</el-menu-item>
         <el-menu-item index="/explore">探索</el-menu-item>
       </el-sub-menu>
-      <el-menu-item index="/user/follow">关注</el-menu-item>
+      <el-menu-item :index="'/follow' + username">关注</el-menu-item>
       <el-menu-item index="/create">音乐创作</el-menu-item>
-        <el-input
-          v-model="input_search"
-          style="width: 240px; height: 30px; margin-left: 10px; margin-right: 10px;"
-          placeholder="搜索音乐/用户"
-          :prefix-icon="Search"
-        />
+      <el-input
+        v-model="input_search"
+        style="width: 240px; height: 30px; margin-left: 10px; margin-right: 10px;"
+        placeholder="搜索音乐/用户"
+        :prefix-icon="Search"
+      />
       <el-menu-item :index="'/user' + username" @click="getSelfUsername">个人中心</el-menu-item>
     </el-menu>
   </template>

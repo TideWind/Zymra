@@ -218,7 +218,7 @@ const filelist = ref([])
           >
             <el-image style="width: 232px; height: 232px;" v-if="form.cover" :src="coverSrc" class="avatar" :fit="cover" />
             <el-icon v-if="showIcon && form.cover" style="position:absolute;" class="avatar-edit-icon"><Edit /></el-icon>
-            <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+            <el-icon v-else class="cover-uploader-icon"><Plus /></el-icon>
           </el-upload>
         </el-card>
         </el-form-item>
@@ -337,11 +337,11 @@ a{
   border-color: var(--el-color-primary);
 }
 
-.el-icon.avatar-uploader-icon {
+.el-icon.cover-uploader-icon {
   font-size: 28px;
   color: #8c939d;
-  width: 230px;
-  height: 230px;
+  width: 230px !important;
+  height: 230px !important;
   text-align: center;
 }
 
