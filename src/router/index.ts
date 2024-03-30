@@ -124,7 +124,7 @@ router.afterEach((to,from,next) => {
 
   window.scrollTo(0,0);
 
-  if(to.path == from.path){
+  if(to.name == from.name){
     window.location.reload();
   }
   if(Cookies.get('current_username')!=null && to.path == '/home' && from.path == '/login'){

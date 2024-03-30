@@ -13,7 +13,6 @@ import download_icon from '../assets/images/icon/download_icon.vue'
 import volume_on_icon from '../assets/images/icon/volume_on_icon.vue'
 import volume_mute_icon from '../assets/images/icon/volume_mute_icon.vue'
 
-import record_img from '../assets/images/record.svg'
 
 const router = useRouter();
 
@@ -25,7 +24,9 @@ const intervalId = ref();
 
 onMounted(() =>{
   intervalId.value = setInterval(updatePlayTimePerTime, 1)
-  getMusicInfo();
+  getLikeState()
+  getMusicInfo()
+  viewMusic()
 })
 
 onBeforeUnmount(() => {
@@ -33,7 +34,6 @@ onBeforeUnmount(() => {
 });
 
 const { proxy } = getCurrentInstance()
-const coverSrc = "https://cdn.piapro.jp/thumb_i/rh/rh3mcwiuc81bimfm_20191030190256_0250_0250.jpg"
 
 const record = ref()
 const record_bg = ref()
@@ -47,13 +47,12 @@ const isOnPlay = ref(false)
 const isLike = ref(false)
 const isMute = ref(false)
 
-const musicAudio = ref();
-const musicSource = ref('/banner/「過去を喰らう」offvo_virtual_kaf_202403170031.mp3');
+const musicAudio = ref()
 
-const playTime = ref(0.00);
+const playTime = ref(0.00)
 const sliderLength = ref(100.00)
 
-const voicePower = ref(0.5);
+const voicePower = ref(0.5)
 
 const canPlay = () => {
   isCanPlay.value = true
@@ -110,9 +109,15 @@ const inputPlayTime = () => {
 const onBtnLickClicked = () => {
   
   if(isLike.value == false)
+  {
+    likeMusic()
     isLike.value = true
+  }
   else
+  {
+    cancelLikeMusic()
     isLike.value = false
+  }
 }
 
 const onBtnVolumeClicked = () => {
@@ -187,9 +192,27 @@ let getMusicInfo = async () => {
     const [hours, minutes, seconds] = res.data.length.split(':').map(Number);
     musicInfo.value.music_length = minutes * 60 + seconds
     sliderLength.value = musicInfo.value.music_length
-
-    console.log(musicInfo.value.music_length)
   }
+}
+
+let viewMusic = async () => {
+  let res = await proxy.$api.viewMusic(props.music_id)
+}
+
+let getLikeState = async () => {
+  let res = await proxy.$api.getLikeState(props.music_id)
+  if (res.status == 200) {
+    isLike.value = res.data
+  }
+}
+
+let likeMusic = async () => {
+  let res = await proxy.$api.likeMusic(props.music_id)
+}
+
+let cancelLikeMusic = async () => {
+  let res = await proxy.$api.cancelLikeMusic(props.music_id)
+  console.log(res)
 }
 
 </script>
@@ -224,7 +247,7 @@ let getMusicInfo = async () => {
                         </el-scrollbar>
                       </div>
 
-                      <audio ref="musicAudio" class="audio-component" :src="'/api/Music/Audio/' + music_id" controls preload="auto" @canplay="canPlay" />
+                      <audio ref="musicAudio" class="audio-component" :src="'/audio/' + music_id + '.mp3'" controls preload="auto" @canplay="canPlay" />
                 </div>
               </el-card>
 
@@ -246,7 +269,7 @@ let getMusicInfo = async () => {
                   <el-button :icon="music_back_icon" class="btn" color="#ea9800" size="large" style="font-size: 20px;" text plain />
                   <el-button @click="onBtnPlayClicked" :loading="!isCanPlay" class="btn" :icon="play_icon" color="#ea9800" size="large" style="font-size: 20px;" circle plain />
                   <el-button :icon="music_forward_icon" class="btn" color="#ea9800" size="large" style="font-size: 20px;" text plain />
-                  <a :href="'/api/Music/Audio/' + music_id" :download="musicInfo.music_name + '.mp3'">
+                  <a :href="'/audio/' + music_id + '.mp3'" :download="musicInfo.music_name + '.mp3'">
                     <el-button :icon="download_icon" class="btn" color="#ea9800" size="large" style="font-size: 20px;" text plain />
                   </a> 
 

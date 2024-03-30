@@ -3,7 +3,9 @@ import { ref, onMounted, computed, getCurrentInstance  } from "vue"
 import ColorThief from 'colorthief/dist/color-thief.mjs'
 
 onMounted(() =>{
-  getMusics()
+  getRecommendMusics()
+  getPopularMusics()
+  getNewMusics()
 })
 
 const banner_images = ref([
@@ -22,149 +24,6 @@ function OnChange(index: number) {
   currentBanner.style.backgroundColor = mainColor.value;
   //console.log(mainColor);
 }
-
-const display_rec = ref([
-  {
-    src: "https://cdn.piapro.jp/thumb_i/wk/wke4xlhvfydnnvid_20191030191544_0250_0250.jpg",
-    name: "糸",
-    mid: "m1"
-  },
-  {
-    src: "https://cdn.piapro.jp/thumb_i/a1/a1m3sp8gyhj0rd9n_20191030190520_0250_0250.jpg",
-    name: "心臓と絡繰",
-    mid: "m2"
-  },
-  {
-    src: "https://cdn.piapro.jp/thumb_i/7x/7xoejj44vhinf86z_20191030191443_0250_0250.jpg",
-    name: "魔女",
-    mid: "m3"
-  },
-  {
-    src: "https://cdn.piapro.jp/thumb_i/j8/j8o8txebob6v4nv7_20191030190730_0250_0250.jpg",
-    name: "quiz",
-    mid: "m4"
-  },
-  {
-    src: "https://cdn.piapro.jp/thumb_i/an/anwubj2862wrdt41_20191030191118_0250_0250.jpg",
-    name: "そして花になる",
-    mid: "m5"
-  },
-  {
-    src: "https://cdn.piapro.jp/thumb_i/rh/rh3mcwiuc81bimfm_20191030190256_0250_0250.jpg",
-    name: "過去を喰らう",
-    mid: "m6"
-  },
-  {
-    src: "https://cdn.piapro.jp/thumb_i/d4/d4ukt2vj57ujiafj_20191030190947_0250_0250.jpg",
-    name: "夜が降り止む前に",
-    mid: "m7"
-  },
-  {
-    src: "https://cdn.piapro.jp/thumb_i/ve/vexeeei0exa99y9y_20191030191733_0250_0250.jpg",
-    name: "夜行バスにて",
-    mid: "m8"
-  },
-]);
-
-const display_new = ref([
-  {
-    src: "https://cdn.piapro.jp/thumb_i/n3/n3z67w80hm3rjkra_20230711171834_0250_0250.png",
-    name: "例えば",
-    mid: "m28"
-  },
-  {
-    src: "https://cdn.piapro.jp/thumb_i/c4/c4yijyktluire9br_20230711163237_0250_0250.jpg",
-    name: "邂逅",
-    mid: "m27"
-  },
-  {
-    src: "https://cdn.piapro.jp/thumb_i/1w/1won9lnrxu4t1pgx_20230711162719_0250_0250.png",
-    name: "人を気取る",
-    mid: "m26"
-  },
-  {
-    src: "https://cdn.piapro.jp/thumb_i/km/kmn8ipvklym6summ_20230711161705_0250_0250.jpg",
-    name: "それを世界と言うんだね",
-    mid: "m25"
-  },
-  {
-    src: "https://cdn.piapro.jp/thumb_i/o4/o4rll8mdgp734z3b_20211030142734_0250_0250.jpg",
-    name: "世惑い子",
-    mid: "m24"
-  },
-  {
-    src: "https://cdn.piapro.jp/thumb_i/1a/1akgnvbup907vpiw_20211030141910_0250_0250.jpg",
-    name: "海に化ける",
-    mid: "m23"
-  },
-  {
-    src: "https://cdn.piapro.jp/thumb_i/s3/s3qysryru3v665ze_20201204190046_0250_0250.jpg",
-    name: "彷徨い",
-    mid: "m22"
-  },
-  {
-    src: "https://cdn.piapro.jp/thumb_i/ia/iaayaniv0cgpv25g_20201204185937_0250_0250.png",
-    name: "畢生よ",
-    mid: "m21"
-  },
-]);
-
-// const display_chart = ref([
-//   {
-//     src: "https://cdn.piapro.jp/thumb_i/wk/wke4xlhvfydnnvid_20191030191544_0250_0250.jpg",
-//     name: "糸",
-//     vocal:"花譜",
-//     mid: "m1"
-//   },
-//   {
-//     src: "https://cdn.piapro.jp/thumb_i/a1/a1m3sp8gyhj0rd9n_20191030190520_0250_0250.jpg",
-//     name: "心臓と絡繰",
-//     vocal:"花譜",
-//     mid: "m2"
-//   },
-//   {
-//     src: "https://cdn.piapro.jp/thumb_i/7x/7xoejj44vhinf86z_20191030191443_0250_0250.jpg",
-//     name: "魔女",
-//     vocal:"花譜",
-//     mid: "m3"
-//   },
-//   {
-//     src: "https://cdn.piapro.jp/thumb_i/j8/j8o8txebob6v4nv7_20191030190730_0250_0250.jpg",
-//     name: "quiz",
-//     vocal:"花譜",
-//     mid: "m4"
-//   },
-//   {
-//     src: "https://cdn.piapro.jp/thumb_i/an/anwubj2862wrdt41_20191030191118_0250_0250.jpg",
-//     name: "そして花になる",
-//     vocal:"花譜",
-//     mid: "m5"
-//   },
-//   {
-//     src: "https://cdn.piapro.jp/thumb_i/rh/rh3mcwiuc81bimfm_20191030190256_0250_0250.jpg",
-//     name: "過去を喰らう",
-//     vocal:"花譜",
-//     mid: "m6"
-//   },
-//   {
-//     src: "https://cdn.piapro.jp/thumb_i/d4/d4ukt2vj57ujiafj_20191030190947_0250_0250.jpg",
-//     name: "夜が降り止む前に",
-//     vocal:"花譜",
-//     mid: "m7"
-//   },
-//   {
-//     src: "https://cdn.piapro.jp/thumb_i/ve/vexeeei0exa99y9y_20191030191733_0250_0250.jpg",
-//     name: "夜行バスにて",
-//     vocal:"花譜",
-//     mid: "m8"
-//   },
-//   {
-//     src: "https://cdn.piapro.jp/thumb_i/uf/uf9a8v5e19pn23ia_20191030191300_0250_0250.jpg",
-//     name: "忘れてしまえ",
-//     vocal:"花譜",
-//     mid: "m9"
-//   },
-// ]);
 
 function getImagesSrc(name: string) {
     return new URL(`${name}`, import.meta.url).href;
@@ -267,15 +126,33 @@ const view_electron_outputValue = useTransition(view_electron, {
   duration: 1000,
 })
 
-const display_chart = ref()
+const display_chart = ref([])
+const display_new = ref([])
+const display_rec = ref([])
 
 const { proxy } = getCurrentInstance()
 
-let getMusics = async () => {
-  let res = await proxy.$api.getMusics()
+let getRecommendMusics = async () => {
+  let res = await proxy.$api.getRecommendMusics(8)
+  if (res.status == 200) {
+    display_rec.value = res.data;
+    //console.log(res.data)
+  }
+}
+
+let getPopularMusics = async () => {
+  let res = await proxy.$api.getPopularMusics(9)
   if (res.status == 200) {
     display_chart.value = res.data;
-    console.log(display_chart)
+    //console.log(res.data)
+  }
+}
+
+let getNewMusics = async () => {
+  let res = await proxy.$api.getNewMusics(8)
+  if (res.status == 200) {
+    display_new.value = res.data;
+    //console.log(res.data)
   }
 }
 
@@ -303,10 +180,10 @@ let getMusics = async () => {
                 <el-divider />
                 <el-row class="container_justify" :gutter="0" v-for="(row, index) in explore_rows" :key="index">
                   <el-col :span="6" style="text-align: center; margin-bottom:10px;" v-for="(item, columnIndex) in row" :key="columnIndex">
-                    <router-link :to="'/music/' + item.mid">
+                    <router-link :to="'/music/' + item.musicId">
                       <el-image
                         class="display_card"
-                        :src="getImagesSrc(item.src)"
+                        :src="'/api/Music/Cover/' + item.musicId"
                         style="width:150px; height: 150px"
                         fit="cover"
                       />
@@ -380,10 +257,10 @@ let getMusics = async () => {
                 <el-divider/>
                 <el-row class="container_justify" :gutter="0" v-for="(row, index) in new_rows" :key="index">
                   <el-col :span="6" style="text-align: center; margin-bottom:10px;" v-for="(item, columnIndex) in row" :key="columnIndex">
-                    <router-link :to="'/music/' + item.mid">
+                    <router-link :to="'/music/' + item.musicId">
                       <el-image
                         class="display_card"
-                        :src="getImagesSrc(item.src)"
+                        :src="'/api/Music/Cover/' + item.musicId"
                         style="width:150px; height: 150px"
                         fit="cover"
                       />
@@ -414,7 +291,7 @@ let getMusics = async () => {
                       />
                       <div>
                       <p style="margin-left: 10px; font-size: 14px; font-weight: bold;">{{item.name}}</p>
-                      <p style="margin-left: 10px; font-size: 14px;">{{item.vocal}}</p>
+                      <p style="margin-left: 10px; font-size: 14px;">{{item.users[0].nickname}}</p>
                       </div>
                     </router-link>
                 </el-row>

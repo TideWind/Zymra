@@ -73,16 +73,58 @@ export default {
             mock: false
         })
     },
-    getMusics(params) {
+    getMusicInfo(params) {
         return request({
-            url: '/Music',
+            url: '/Music/getMusicInfo/' + params,
             method: 'get',
             mock: false
         })
     },
-    getMusicInfo(params) {
+    viewMusic(params) {
         return request({
-            url: '/Music/getMusicInfo/' + params,
+            url: '/Music/View/' + params,
+            method: 'put',
+            mock: false
+        })
+    },
+    getPopularMusics(params) {
+        return request({
+            url: '/Music/GetPopularMusics/' + params,
+            method: 'get',
+            mock: false
+        })
+    },
+    getNewMusics(params) {
+        return request({
+            url: '/Music/GetNewMusics/' + params,
+            method: 'get',
+            mock: false
+        })
+    },
+    getRecommendMusics(params) {
+        return request({
+            url: '/Music/GetRecommendMusics/' + params,
+            method: 'get',
+            mock: false
+        })
+    },
+    getLikeState(params) {
+        return request({
+            url: '/Music/GetLikeState/' + params,
+            method: 'get',
+            mock: false
+        })
+    },
+    likeMusic(params) {
+        return request({
+            url: '/Music/Like/' + params,
+            method: 'put',
+            mock: false
+        })
+    },
+    getLikeMusics(params) {
+        return request({
+            url: '/Music/GetLikeMusics/' + params,
             method: 'get',
             mock: false
         })

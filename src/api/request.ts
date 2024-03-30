@@ -41,7 +41,7 @@ let tokenRefresher = async () => {
     let now = new Date().getTime()
     if (now - Cookies.get('last_token_refresh_time') > 1000 * 60 * 4) {
         let res = await service({
-            url: '/auth/refresh/',
+            url: '/auth/refresh',
             method: 'post',
             headers: {
                 'Authorization': `Bearer ${Cookies.get('access_token')}`
