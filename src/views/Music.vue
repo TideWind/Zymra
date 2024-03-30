@@ -214,7 +214,6 @@ let cancelLikeMusic = async () => {
   let res = await proxy.$api.cancelLikeMusic(props.music_id)
   console.log(res)
 }
-
 </script>
 
 <template>

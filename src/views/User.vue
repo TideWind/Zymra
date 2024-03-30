@@ -122,6 +122,8 @@ const userLikeCount = 53848
 //   },
 // ]);
 
+const activeTab = ref('works')
+
 const likeMusics = ref([])
 
 let getLikeMusics = async () => {
@@ -131,6 +133,13 @@ let getLikeMusics = async () => {
     console.log(res.data)
   }
 }
+
+const timeFormat = (value) =>
+{
+  const [hours, minutes, seconds] = value.split(':');
+  return `${minutes}:${seconds}`;
+}
+
 
 </script>
 
@@ -200,31 +209,61 @@ let getLikeMusics = async () => {
                     </div> 
                   </el-row>
                         
-                  <span style="font-weight: bold; font-size:20px; margin-left:44px;">喜欢的音乐</span>
+                  <!-- <span style="font-weight: bold; font-size:20px; margin-left:44px;">喜欢的音乐</span> -->
 
-                  <el-row style="margin-top:-4px">
-                    <el-col :span="4" style="margin-top:9px; margin-left:30px">
+                  <el-tabs v-model="activeTab" style="--el-font-size-base:18px; margin-left:44px; --el-color-primary:#FFA500;--el-border-color-light:transparent; width:946px">
+                    <el-tab-pane label="投稿" name="works">
+
+                      
+                      <el-row style="margin-top:-4px">
+                    <el-col :span="4" style="margin-top:9px; margin-left:-5px">
                       <p style="margin-left: 44px; font-size: 12px; color: #888">#</p>
                     </el-col>
-                    <el-col :span="4" style="margin-top:9px; margin-left:-120px">
+                    <el-col :span="4" style="margin-top:9px; margin-left:-105px">
                       <p style="margin-left: 28px; font-size: 12px; color: #888">标题</p>
                     </el-col>
                     <el-col :span="4" style="margin-top:-5px; margin-left:-100px">
                     </el-col>
-                    <el-col :span="4" style="margin-top:-6px; margin-left:300px">
+                    <el-col :span="4" style="margin-top:-6px; margin-left:290px">
                       <p style="margin-left: 0px; font-size: 12px; margin-top:28px; color: #888">专辑</p>
                     </el-col>
-                    <el-col :span="4" style="margin-top:-6px; margin-left:40px">
+                    <el-col :span="4" style="margin-top:-6px; margin-left:75px">
                       <p style="margin-left: 68px; font-size: 12px; margin-top:28px; color: #888">时长</p>
                     </el-col>
                   </el-row>
 
                   <div class="container_justify">
-                    <el-divider style="margin-left:40px; margin-right:40px; margin-top:6px; margin-bottom:10px"/>
+                    <el-divider style="margin-left:0px; margin-right:0px; margin-top:6px; margin-bottom:10px"/>
+                  </div>
+
+
+                    </el-tab-pane>
+                    <el-tab-pane label="喜欢" name="likes">
+                      
+
+                  <el-row style="margin-top:-4px">
+                    <el-col :span="4" style="margin-top:9px; margin-left:-5px">
+                      <p style="margin-left: 44px; font-size: 12px; color: #888">#</p>
+                    </el-col>
+                    <el-col :span="4" style="margin-top:9px; margin-left:-105px">
+                      <p style="margin-left: 28px; font-size: 12px; color: #888">标题</p>
+                    </el-col>
+                    <el-col :span="4" style="margin-top:-5px; margin-left:-100px">
+                    </el-col>
+                    <el-col :span="4" style="margin-top:-6px; margin-left:290px">
+                      <p style="margin-left: 0px; font-size: 12px; margin-top:28px; color: #888">专辑</p>
+                    </el-col>
+                    <el-col :span="4" style="margin-top:-6px; margin-left:75px">
+                      <p style="margin-left: 68px; font-size: 12px; margin-top:28px; color: #888">时长</p>
+                    </el-col>
+                  </el-row>
+
+                  <div class="container_justify">
+                    <el-divider style="margin-left:0px; margin-right:0px; margin-top:6px; margin-bottom:10px"/>
                   </div>
 
                   
-                  <el-card class="display_card" v-for="(item, index) in likeMusics" :key="index" shadow="hover" style="--el-card-padding:2px; margin-top:0px; margin-left:40px; margin-right:40px; height:65px; border:0px">
+                  <el-card class="display_card" v-for="(item, index) in likeMusics" :key="index" shadow="hover" style="--el-card-padding:2px; margin-top:6px; margin-left:6px; margin-right:6px; height:65px; border:0px">
                     <router-link :to="'/music/' + item.musicId">
                       <el-row >
                         <el-col :span="4" style="margin-top:8px; margin-left:30px">
@@ -233,19 +272,27 @@ let getLikeMusics = async () => {
                         <el-col :span="4" style="margin-top:5px; margin-left:-120px">
                           <el-image :src="'/api/Music/Cover/' + item.musicId" style="width:50px; height: 50px;  border: 1px solid transparent; border-radius: 8px;" fit="cover"/>
                         </el-col>
-                        <el-col :span="4" style="margin-top:-5px; margin-left:-100px">
+                        <el-col :span="4" style="margin-top:-5px; margin-left:-90px">
                           <p style="margin-left: 0px; font-size: 14px;">{{ item.name }}</p>
                           <p style="margin-left: 0px; font-size: 14px; margin-top:-10px; color: #888">{{ item.users[0].nickname }}</p>
                         </el-col>
-                        <el-col :span="4" style="margin-top:-6px; margin-left:300px">
+                        <el-col :span="4" style="margin-top:-6px; margin-left:260px">
                           <p style="margin-left: 0px; font-size: 14px; margin-top:28px; color: #888">{{ item.album }}</p>
                         </el-col>
-                        <el-col :span="4" style="margin-top:-6px; margin-left:40px">
-                          <p style="margin-left: 80px; font-size: 14px; margin-top:28px; color: #888">{{ item.length }}</p>
+                        <el-col :span="4" style="margin-top:-6px; margin-left:60px">
+                          <p style="margin-left: 80px; font-size: 14px; margin-top:28px; color: #888">{{ timeFormat(item.length) }}</p>
                         </el-col>
                     </el-row>
                   </router-link>
                 </el-card>
+
+                <div style="margin-bottom:40px" />
+
+
+                    </el-tab-pane>
+                  </el-tabs>
+
+                  
                   
               </el-card>
           </el-container>
@@ -303,4 +350,5 @@ a{
   margin-top:70px;
   font-size: 30px;
 }
+
 </style>
