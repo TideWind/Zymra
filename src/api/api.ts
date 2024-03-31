@@ -131,14 +131,70 @@ export default {
     },
     getUserMusics(params) {
         return request({
-            url: '/Music/getUserMusics/' + params,
+            url: '/Music/GetUserMusics/' + params,
             method: 'get',
             mock: false
         })
     },
     getSelfMusics(params) {
         return request({
-            url: '/Music/getSelfMusics',
+            url: '/Music/GetSelfMusics',
+            method: 'get',
+            mock: false
+        })
+    },
+    getSelfData(params) {
+        return request({
+            url: '/Music/GetSelfData',
+            method: 'get',
+            mock: false
+        })
+    },
+    getFollowCount(params) {
+        return request({
+            url: '/User/GetFollowCount/' + params,
+            method: 'get',
+            mock: false
+        })
+    },
+    getFanCount(params) {
+        return request({
+            url: '/User/GetFanCount/' + params,
+            method: 'get',
+            mock: false
+        })
+    },
+    getLikeCount(params) {
+        return request({
+            url: '/User/GetLikeCount/' + params,
+            method: 'get',
+            mock: false
+        })
+    },
+    getFollowState(params) {
+        return request({
+            url: '/User/GetFollowState/' + params,
+            method: 'get',
+            mock: false
+        })
+    },
+    followUser(params) {
+        return request({
+            url: '/User/Follow/' + params,
+            method: 'post',
+            mock: false
+        })
+    },
+    cancelFollowUser(params) {
+        return request({
+            url: '/User/CancelFollow/' + params,
+            method: 'delete',
+            mock: false
+        })
+    },
+    getFollows(params) {
+        return request({
+            url: '/User/GetFollows/' + params,
             method: 'get',
             mock: false
         })

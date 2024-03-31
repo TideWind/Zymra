@@ -14,7 +14,7 @@ let getSelfMusics = async () => {
   let res = await proxy.$api.getSelfMusics()
   if (res.status == 200) {
     musics.value = res.data;
-    console.log(musics.value)
+    //console.log(musics.value)
   }
 }
 

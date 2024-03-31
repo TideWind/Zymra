@@ -14,8 +14,12 @@ const props = defineProps({
 
 onMounted(() =>{
   getUserInfo()
+  getFollowCount()
+  getFanCount()
+  getLikeCount()
   getUserMusics()
   getLikeMusics()
+  getFollowState()
 })
 
 const userInfo = ref({
@@ -44,9 +48,9 @@ const loginout = () => {
   router.push({path: '/'})
 }
 
-const userFollowCount = 87
-const userFanCount = 3649
-const userLikeCount = 53848
+const userFollowCount = ref()
+const userFanCount = ref()
+const userLikeCount = ref()
 
 const activeTab = ref('works')
 
@@ -56,23 +60,95 @@ const userMusics = ref([])
 let getLikeMusics = async () => {
   let res = await proxy.$api.getLikeMusics(props.username)
   if (res.status == 200) {
-    likeMusics.value = res.data;
-    console.log(likeMusics.value)
+    likeMusics.value = res.data
+    //console.log(likeMusics.value)
   }
 }
 
 let getUserMusics = async () => {
   let res = await proxy.$api.getUserMusics(props.username)
   if (res.status == 200) {
-    userMusics.value = res.data;
-    console.log(res.data)
+    userMusics.value = res.data
+    //console.log(res.data)
+  }
+}
+
+let getFollowCount = async () => {
+  let res = await proxy.$api.getFollowCount(props.username)
+  if (res.status == 200) {
+    userFollowCount.value = res.data
+    //console.log(res.data)
+  }
+}
+
+let getFanCount = async () => {
+  let res = await proxy.$api.getFanCount(props.username)
+  if (res.status == 200) {
+    userFanCount.value = res.data
+    //console.log(res.data)
+  }
+}
+
+let getLikeCount = async () => {
+  let res = await proxy.$api.getLikeCount(props.username)
+  if (res.status == 200) {
+    userLikeCount.value = res.data
+    //console.log(res.data)
+  }
+}
+
+const isFollowd = ref(false)
+
+let getFollowState = async () => {
+  let res = await proxy.$api.getFollowState(props.username)
+  if (res.status == 200) {
+    isFollowd.value = res.data
+    //console.log(res.data)
   }
 }
 
 const timeFormat = (value) =>
 {
-  const [hours, minutes, seconds] = value.split(':');
-  return `${minutes}:${seconds}`;
+  const [hours, minutes, seconds] = value.split(':')
+  return `${minutes}:${seconds}`
+}
+
+const btnText = ref("已关注")
+const changeBtnText = () =>
+{
+  btnText.value = "取消关注"
+}
+const resetBtnText = () =>
+{
+  btnText.value = "已关注"
+}
+
+const follow = () =>
+{
+  followUser()
+}
+
+let followUser = async () => {
+  let res = await proxy.$api.followUser(props.username)
+  if (res.status == 200) {
+    isFollowd.value = true
+    getFanCount()
+    //console.log(res.data)
+  }
+}
+
+const cancelFollow = () =>
+{
+  cancelFollowUser()
+}
+
+let cancelFollowUser = async () => {
+  let res = await proxy.$api.cancelFollowUser(props.username)
+  if (res.status == 200) {
+    isFollowd.value = false
+    getFanCount()
+    //console.log(res.data)
+  }
 }
 
 
@@ -105,7 +181,7 @@ const timeFormat = (value) =>
                       <div style="margin-top:-30px; margin-left: 40px;">
                         
                         <div style="display:inline-block; margin-left: 20px; text-align: center;">
-                          <router-link :to="'/user/follow'">
+                          <router-link :to="'/follow/' + username">
                             <p style="font-size:22px;">{{ userFollowCount }}</p>
                             <p style="font-size:14px; margin-top:-18px; color: #888">关注</p>
                           </router-link>
@@ -114,7 +190,7 @@ const timeFormat = (value) =>
                         <el-divider direction="vertical" style="height:40px; margin-top:-34px; margin-left:30px" />
 
                         <div style="display:inline-block; margin-left: 20px; text-align: center;">
-                          <router-link :to="'/user/fans'">
+                          <router-link :to="'/fans/' + username">
                             <p style="font-size:22px;">{{ userFanCount }}</p>
                             <p style="font-size:14px; margin-top:-18px; color: #888">粉丝</p>
                           </router-link>
@@ -137,7 +213,8 @@ const timeFormat = (value) =>
                         </div>
 
                         <div v-else style="margin-left:628px; margin-top:-170px">
-                        <el-button @click="follow" color="#FFA500" style="width:100px; font-weight:bold" plain >关注</el-button>
+                          <el-button v-if="!isFollowd" @click="follow" color="#FFA500" style="width:100px; font-weight:bold" plain >关注</el-button>
+                          <el-button v-else @click="cancelFollow" color="#FFA500" style="width:100px; font-weight:bold" @mouseenter="changeBtnText" @mouseleave="resetBtnText" plain >{{ btnText }}</el-button>
                         </div>
 
                       </div>

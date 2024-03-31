@@ -15,6 +15,7 @@ import Create from "../views/Create.vue"
 import Submit from "../views/Submit.vue"
 import Works from "../views/Works.vue"
 import Data from "../views/Data.vue"
+import Follow from "../views/Follow.vue"
 
 const routes = [
   {
@@ -56,12 +57,7 @@ const routes = [
       path: "/follow/:username",
       name:"Follow",
       props: true,
-      component: NotFound,
-    },
-    {
-      path: "/create",
-      name:"Create",
-      component: NotFound,
+      component: Follow,
     },
     {
       path: "/user/:username",
