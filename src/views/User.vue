@@ -14,6 +14,7 @@ const props = defineProps({
 
 onMounted(() =>{
   getUserInfo()
+  getUserMusics()
   getLikeMusics()
 })
 
@@ -47,89 +48,23 @@ const userFollowCount = 87
 const userFanCount = 3649
 const userLikeCount = 53848
 
-// const likeMusics = ref([
-//   {
-//     src: "https://cdn.piapro.jp/thumb_i/wk/wke4xlhvfydnnvid_20191030191544_0250_0250.jpg",
-//     name: "糸",
-//     vocal:"花譜",
-//     album:"不可解",
-//     length:"04:19",
-//     mid: "m1"
-//   },
-//   {
-//     src: "https://cdn.piapro.jp/thumb_i/a1/a1m3sp8gyhj0rd9n_20191030190520_0250_0250.jpg",
-//     name: "心臓と絡繰",
-//     vocal:"花譜",
-//     album:"不可解",
-//     length:"04:19",
-//     mid: "m2"
-//   },
-//   {
-//     src: "https://cdn.piapro.jp/thumb_i/7x/7xoejj44vhinf86z_20191030191443_0250_0250.jpg",
-//     name: "魔女",
-//     vocal:"花譜",
-//     album:"不可解",
-//     length:"04:19",
-//     mid: "m3"
-//   },
-//   {
-//     src: "https://cdn.piapro.jp/thumb_i/j8/j8o8txebob6v4nv7_20191030190730_0250_0250.jpg",
-//     name: "quiz",
-//     vocal:"花譜",
-//     album:"不可解",
-//     length:"04:19",
-//     mid: "m4"
-//   },
-//   {
-//     src: "https://cdn.piapro.jp/thumb_i/an/anwubj2862wrdt41_20191030191118_0250_0250.jpg",
-//     name: "そして花になる",
-//     vocal:"花譜",
-//     album:"不可解",
-//     length:"04:19",
-//     mid: "m5"
-//   },
-//   {
-//     src: "https://cdn.piapro.jp/thumb_i/rh/rh3mcwiuc81bimfm_20191030190256_0250_0250.jpg",
-//     name: "過去を喰らう",
-//     vocal:"花譜",
-//     album:"不可解",
-//     length:"04:19",
-//     mid: "m6"
-//   },
-//   {
-//     src: "https://cdn.piapro.jp/thumb_i/d4/d4ukt2vj57ujiafj_20191030190947_0250_0250.jpg",
-//     name: "夜が降り止む前に",
-//     vocal:"花譜",
-//     album:"不可解",
-//     length:"04:19",
-//     mid: "m7"
-//   },
-//   {
-//     src: "https://cdn.piapro.jp/thumb_i/ve/vexeeei0exa99y9y_20191030191733_0250_0250.jpg",
-//     name: "夜行バスにて",
-//     vocal:"花譜",
-//     album:"不可解",
-//     length:"04:19",
-//     mid: "m8"
-//   },
-//   {
-//     src: "https://cdn.piapro.jp/thumb_i/uf/uf9a8v5e19pn23ia_20191030191300_0250_0250.jpg",
-//     name: "忘れてしまえ",
-//     vocal:"花譜",
-//     album:"不可解",
-//     length:"04:19",
-//     mid: "m9"
-//   },
-// ]);
-
 const activeTab = ref('works')
 
 const likeMusics = ref([])
+const userMusics = ref([])
 
 let getLikeMusics = async () => {
   let res = await proxy.$api.getLikeMusics(props.username)
   if (res.status == 200) {
     likeMusics.value = res.data;
+    console.log(likeMusics.value)
+  }
+}
+
+let getUserMusics = async () => {
+  let res = await proxy.$api.getUserMusics(props.username)
+  if (res.status == 200) {
+    userMusics.value = res.data;
     console.log(res.data)
   }
 }
@@ -145,7 +80,7 @@ const timeFormat = (value) =>
 
 <template>
           <el-container style="display: grid; place-items: center;">
-              <el-card class="card" style="width:1080px; height: 1080px">
+              <el-card class="card" style="width:1080px; min-height: 700px">
 
                   <el-row style="margin-top: 30px; margin-bottom:40px;">
                     <el-card style="width: 180px; height: 180px; margin-left: 40px; --el-card-padding: 4px;" shadow="never">
@@ -201,7 +136,7 @@ const timeFormat = (value) =>
                           </div>
                         </div>
 
-                        <div v-else style="style:inline-block; margin-left:628px; margin-top:-170px">
+                        <div v-else style="margin-left:628px; margin-top:-170px">
                         <el-button @click="follow" color="#FFA500" style="width:100px; font-weight:bold" plain >关注</el-button>
                         </div>
 
@@ -236,6 +171,33 @@ const timeFormat = (value) =>
                     <el-divider style="margin-left:0px; margin-right:0px; margin-top:6px; margin-bottom:10px"/>
                   </div>
 
+                  <p v-if="userMusics.length == 0" style="text-align:center; color:#888">用户还没有投稿过音乐哦</p>
+
+                  <el-card class="display_card" v-for="(item, index) in userMusics" :key="index" shadow="hover" style="--el-card-padding:2px; margin-top:6px; margin-left:6px; margin-right:6px; height:65px; border:0px">
+                    <router-link :to="'/music/' + item.musicId">
+                      <el-row >
+                        <el-col :span="4" style="margin-top:8px; margin-left:30px">
+                          <p style="margin-left: 0px; font-size: 14px; color: #888">{{ index + 1 }}</p>
+                        </el-col>
+                        <el-col :span="4" style="margin-top:5px; margin-left:-120px">
+                          <el-image :src="'/api/Music/Cover/' + item.musicId" style="width:50px; height: 50px;  border: 1px solid transparent; border-radius: 8px;" fit="cover"/>
+                        </el-col>
+                        <el-col :span="4" style="margin-top:-5px; margin-left:-90px">
+                          <p style="margin-left: 0px; font-size: 14px;">{{ item.name }}</p>
+                          <p style="margin-left: 0px; font-size: 14px; margin-top:-10px; color: #888">{{ item.users[0].nickname }}</p>
+                        </el-col>
+                        <el-col :span="4" style="margin-top:-6px; margin-left:260px">
+                          <p style="margin-left: 0px; font-size: 14px; margin-top:28px; color: #888">{{ item.album }}</p>
+                        </el-col>
+                        <el-col :span="4" style="margin-top:-6px; margin-left:60px">
+                          <p style="margin-left: 80px; font-size: 14px; margin-top:28px; color: #888">{{ timeFormat(item.length) }}</p>
+                        </el-col>
+                    </el-row>
+                  </router-link>
+                </el-card>
+
+                <div style="margin-bottom:40px" />
+
 
                     </el-tab-pane>
                     <el-tab-pane label="喜欢" name="likes">
@@ -262,6 +224,7 @@ const timeFormat = (value) =>
                     <el-divider style="margin-left:0px; margin-right:0px; margin-top:6px; margin-bottom:10px"/>
                   </div>
 
+                  <p v-if="likeMusics.length == 0" style="text-align:center; color:#888">用户还没有喜欢过音乐哦</p>
                   
                   <el-card class="display_card" v-for="(item, index) in likeMusics" :key="index" shadow="hover" style="--el-card-padding:2px; margin-top:6px; margin-left:6px; margin-right:6px; height:65px; border:0px">
                     <router-link :to="'/music/' + item.musicId">

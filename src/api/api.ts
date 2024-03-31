@@ -129,4 +129,18 @@ export default {
             mock: false
         })
     },
+    getUserMusics(params) {
+        return request({
+            url: '/Music/getUserMusics/' + params,
+            method: 'get',
+            mock: false
+        })
+    },
+    getSelfMusics(params) {
+        return request({
+            url: '/Music/getSelfMusics',
+            method: 'get',
+            mock: false
+        })
+    },
 }

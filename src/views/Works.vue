@@ -1,129 +1,226 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue"
+import { ref, onMounted, getCurrentInstance } from "vue"
 import { Headset } from '@element-plus/icons-vue'
 
 onMounted(() =>{
-
+  getSelfMusics()
 })
 
-const musics = ref([
-  {
-    src: "https://cdn.piapro.jp/thumb_i/wk/wke4xlhvfydnnvid_20191030191544_0250_0250.jpg",
-    name: "糸",
-    vocal:"花譜",
-    album:"不可解",
-    length:"04:19",
-    mid: "m1",
-    view:25565
-  },
-  {
-    src: "https://cdn.piapro.jp/thumb_i/a1/a1m3sp8gyhj0rd9n_20191030190520_0250_0250.jpg",
-    name: "心臓と絡繰",
-    vocal:"花譜",
-    album:"不可解",
-    length:"04:19",
-    mid: "m2",
-    view:25565
-  },
-  {
-    src: "https://cdn.piapro.jp/thumb_i/7x/7xoejj44vhinf86z_20191030191443_0250_0250.jpg",
-    name: "魔女",
-    vocal:"花譜",
-    album:"不可解",
-    length:"04:19",
-    mid: "m3",
-    view:25565
-  },
-  {
-    src: "https://cdn.piapro.jp/thumb_i/j8/j8o8txebob6v4nv7_20191030190730_0250_0250.jpg",
-    name: "quiz",
-    vocal:"花譜",
-    album:"不可解",
-    length:"04:19",
-    mid: "m4",
-    view:25565
-  },
-  {
-    src: "https://cdn.piapro.jp/thumb_i/an/anwubj2862wrdt41_20191030191118_0250_0250.jpg",
-    name: "そして花になる",
-    vocal:"花譜",
-    album:"不可解",
-    length:"04:19",
-    mid: "m5",
-    view:25565
-  },
-  {
-    src: "https://cdn.piapro.jp/thumb_i/rh/rh3mcwiuc81bimfm_20191030190256_0250_0250.jpg",
-    name: "過去を喰らう",
-    vocal:"花譜",
-    album:"不可解",
-    length:"04:19",
-    mid: "m6",
-    view:25565
-  },
-  {
-    src: "https://cdn.piapro.jp/thumb_i/d4/d4ukt2vj57ujiafj_20191030190947_0250_0250.jpg",
-    name: "夜が降り止む前に",
-    vocal:"花譜",
-    album:"不可解",
-    length:"04:19",
-    mid: "m7",
-    view:25565
-  },
-  {
-    src: "https://cdn.piapro.jp/thumb_i/ve/vexeeei0exa99y9y_20191030191733_0250_0250.jpg",
-    name: "夜行バスにて",
-    vocal:"花譜",
-    album:"不可解",
-    length:"04:19",
-    mid: "m8",
-    view:25565
-  },
-  {
-    src: "https://cdn.piapro.jp/thumb_i/uf/uf9a8v5e19pn23ia_20191030191300_0250_0250.jpg",
-    name: "忘れてしまえ",
-    vocal:"花譜",
-    album:"不可解",
-    length:"04:19",
-    mid: "m9",
-    view:25565
-  },
-]);
+const musics = ref([]);
+
+const { proxy } = getCurrentInstance()
+
+let getSelfMusics = async () => {
+  let res = await proxy.$api.getSelfMusics()
+  if (res.status == 200) {
+    musics.value = res.data;
+    console.log(musics.value)
+  }
+}
+
+const timeFormat = (value) =>
+{
+  const [hours, minutes, seconds] = value.split(':');
+  return `${minutes}:${seconds}`;
+}
+
+const formatDateTime = (dateTimeString) => {
+  const date = new Date(dateTimeString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+
+  return `${year}年${month}月${day}日 ${hours}:${minutes}:${seconds}`;
+}
+
+const activeTab = ref('all')
 
 </script>
 
 <template>
   <el-container>
-    <el-card class="card" style="width:1080px; height:1800px">
-      <el-divider style="margin-left:20px; width:976px; margin-top:40px; margin-bottom:0px"/>
+    <el-card class="card" style="width:1080px; min-height:700px">
+
+      <el-tabs v-model="activeTab" style="margin-left:20px;--el-text-color-primary:#888; --el-color-primary:#FFA500;--el-border-color-light:transparent; width:946px">
+          <el-tab-pane label="全部稿件" name="all">
+
+
+            <el-divider style="margin-left:0px; width:930px; margin-top:10px; margin-bottom:0px"/>
+            <p v-if="musics.length == 0" style="text-align:center; color:#888; margin-top:30px;">目前没有投稿的音乐哦</p>
                   <div v-for="(item, index) in musics" :key="index">
       <el-card class="display_card"  shadow="none" style="--el-card-padding:2px; width:1000px;margin-left:20px; margin-right:0px; height:160px; border:0px">
                     
                       <el-row >
                         <el-col :span="4" style="margin-top:16px; margin-left:0px;">
-                          <el-image :src="item.src" style="width:120px; height: 120px;  border: 1px solid transparent;" fit="cover"/>
+                          <el-image :src="'/api/Music/Cover/' + item.musicId" style="width:120px; height: 120px;  border: 1px solid transparent;" fit="cover"/>
                         </el-col>
                         <el-col :span="4" style="margin-top:0px; margin-left:0px">
-                          <router-link :to="'/music/' + item.mid">
+                          <router-link :to="'/music/' + item.musicId">
                             <p style="margin-left: 0px; font-size: 16px;">{{ item.name }}</p>
                           </router-link>
-                          <p style="margin-left: 0px; font-size: 14px; margin-top:-10px; color: #888">{{ item.vocal }}</p>
                           <p style="margin-left: 0px; font-size: 14px; margin-top:-10px; color: #888">{{ item.album }}</p>
-                          <p style="margin-left: 0px; font-size: 14px; margin-top:-10px; color: #888">{{ item.length }}</p>
-                          <el-icon color="#888" style="font-size: 14px; margin-top:-10px"><Headset /></el-icon>
+                          <p style="margin-left: 0px; font-size: 14px; margin-top:-10px; color: #888">{{ item.users[0].nickname }}</p>
+                          <p style="margin-left: 0px; font-size: 14px; margin-top:-10px;margin-bottom:10px; color: #888; white-space: nowrap">{{ formatDateTime(item.createdTime) }}</p>
+                          <el-icon color="#888" style="font-size: 14px; margin-top:0px"><Headset /></el-icon>
                           <span style="margin-left: 3px; font-size: 14px; margin-top:0px; color: #888">{{ item.view }}</span>
+                          <p style="position: relative;z-index:10; margin-left:-78px; margin-top:-24px;">
+                            <span style="background:black; margin-left: 0px; font-size: 12px; margin-top:0px; color: white">{{ timeFormat(item.length) }}</span>
+                          </p>
+                          
                         </el-col>
 
-                          <el-button  style="width:80px; margin-top:100px; margin-left:460px; --el-color-primary:#FFA500" plain>编辑</el-button>
+                          <el-button  style="width:80px; margin-top:100px; margin-left:376px; --el-color-primary:#FFA500" plain>编辑</el-button>
                           <el-button  style="width:80px; margin-top:100px; margin-left:20px; --el-color-primary:#FFA500" plain>删除</el-button>
-                        <div v-if="true" style="display:inline-block; margin-top:40px;">
+                        <div v-if="item.status == 0" style="display:inline-block; margin-top:40px;">
+                          <span style="margin-left: -124px; font-size: 14px; color: #888">稿件审核中</span>
+                        </div>
+                        <div v-if="item.status == 3" style="display:inline-block; margin-top:40px;">
+                          <span style="margin-left: -140px; font-size: 14px; color: red">稿件审核未通过</span>
+                        </div>
+                    </el-row>
+                  
+                </el-card>
+                <el-divider style="margin-left:20px; width:890px; margin-top:0px; margin-bottom:0px"/>
+              </div>
+
+              <div style="margin-bottom:40px" />
+
+
+          </el-tab-pane>
+            <el-tab-pane label="审核中" name="pending">
+
+
+              <el-divider style="margin-left:0px; width:930px; margin-top:10px; margin-bottom:0px"/>
+              <p v-if="musics.filter(item => item.status == 0) == 0" style="text-align:center; color:#888; margin-top:30px;">目前没有正在审核中的音乐哦</p>
+                  <div v-for="(item, index) in musics" :key="index">
+                    <div v-if="item.status == 0">
+      <el-card class="display_card"  shadow="none" style="--el-card-padding:2px; width:1000px;margin-left:20px; margin-right:0px; height:160px; border:0px">
+                    
+                      <el-row >
+                        <el-col :span="4" style="margin-top:16px; margin-left:0px;">
+                          <el-image :src="'/api/Music/Cover/' + item.musicId" style="width:120px; height: 120px;  border: 1px solid transparent;" fit="cover"/>
+                        </el-col>
+                        <el-col :span="4" style="margin-top:0px; margin-left:0px">
+                          <router-link :to="'/music/' + item.musicId">
+                            <p style="margin-left: 0px; font-size: 16px;">{{ item.name }}</p>
+                          </router-link>
+                          <p style="margin-left: 0px; font-size: 14px; margin-top:-10px; color: #888">{{ item.album }}</p>
+                          <p style="margin-left: 0px; font-size: 14px; margin-top:-10px; color: #888">{{ item.users[0].nickname }}</p>
+                          <p style="margin-left: 0px; font-size: 14px; margin-top:-10px;margin-bottom:10px; color: #888; white-space: nowrap">{{ formatDateTime(item.createdTime) }}</p>
+                          <el-icon color="#888" style="font-size: 14px; margin-top:0px"><Headset /></el-icon>
+                          <span style="margin-left: 3px; font-size: 14px; margin-top:0px; color: #888">{{ item.view }}</span>
+                          <p style="position: relative;z-index:10; margin-left:-78px; margin-top:-24px;">
+                            <span style="background:black; margin-left: 0px; font-size: 12px; margin-top:0px; color: white">{{ timeFormat(item.length) }}</span>
+                          </p>
+                          
+                        </el-col>
+
+                          <el-button  style="width:80px; margin-top:100px; margin-left:376px; --el-color-primary:#FFA500" plain>编辑</el-button>
+                          <el-button  style="width:80px; margin-top:100px; margin-left:20px; --el-color-primary:#FFA500" plain>删除</el-button>
+                        <div style="display:inline-block; margin-top:40px;">
                           <span style="margin-left: -124px; font-size: 14px; color: #888">稿件审核中</span>
                         </div>
                     </el-row>
                   
                 </el-card>
-                <el-divider style="margin-left:20px; width:976px; margin-top:0px; margin-bottom:0px"/>
+                <el-divider style="margin-left:20px; width:890px; margin-top:0px; margin-bottom:0px"/>
               </div>
+            </div>
+
+              <div style="margin-bottom:40px" />
+
+
+            </el-tab-pane>
+              <el-tab-pane label="已通过" name="approved">
+
+
+                <el-divider style="margin-left:0px; width:930px; margin-top:10px; margin-bottom:0px"/>
+              <p v-if="musics.filter(item => item.status == 1) == 0" style="text-align:center; color:#888; margin-top:30px;">目前没有已通过的音乐哦</p>
+                  <div v-for="(item, index) in musics" :key="index">
+                    <div v-if="item.status == 1">
+      <el-card class="display_card"  shadow="none" style="--el-card-padding:2px; width:1000px;margin-left:20px; margin-right:0px; height:160px; border:0px">
+                    
+                      <el-row >
+                        <el-col :span="4" style="margin-top:16px; margin-left:0px;">
+                          <el-image :src="'/api/Music/Cover/' + item.musicId" style="width:120px; height: 120px;  border: 1px solid transparent;" fit="cover"/>
+                        </el-col>
+                        <el-col :span="4" style="margin-top:0px; margin-left:0px">
+                          <router-link :to="'/music/' + item.musicId">
+                            <p style="margin-left: 0px; font-size: 16px;">{{ item.name }}</p>
+                          </router-link>
+                          <p style="margin-left: 0px; font-size: 14px; margin-top:-10px; color: #888">{{ item.album }}</p>
+                          <p style="margin-left: 0px; font-size: 14px; margin-top:-10px; color: #888">{{ item.users[0].nickname }}</p>
+                          <p style="margin-left: 0px; font-size: 14px; margin-top:-10px;margin-bottom:10px; color: #888; white-space: nowrap">{{ formatDateTime(item.createdTime) }}</p>
+                          <el-icon color="#888" style="font-size: 14px; margin-top:0px"><Headset /></el-icon>
+                          <span style="margin-left: 3px; font-size: 14px; margin-top:0px; color: #888">{{ item.view }}</span>
+                          <p style="position: relative;z-index:10; margin-left:-78px; margin-top:-24px;">
+                            <span style="background:black; margin-left: 0px; font-size: 12px; margin-top:0px; color: white">{{ timeFormat(item.length) }}</span>
+                          </p>
+                          
+                        </el-col>
+
+                          <el-button  style="width:80px; margin-top:100px; margin-left:376px; --el-color-primary:#FFA500" plain>编辑</el-button>
+                          <el-button  style="width:80px; margin-top:100px; margin-left:20px; --el-color-primary:#FFA500" plain>删除</el-button>
+                    </el-row>
+                  
+                </el-card>
+                <el-divider style="margin-left:20px; width:890px; margin-top:0px; margin-bottom:0px"/>
+              </div>
+            </div>
+
+              <div style="margin-bottom:40px" />
+
+
+              </el-tab-pane>
+                <el-tab-pane label="未通过" name="refused">
+
+
+                  <el-divider style="margin-left:0px; width:930px; margin-top:10px; margin-bottom:0px"/>
+              <p v-if="musics.filter(item => item.status == 2) == 0" style="text-align:center; color:#888; margin-top:30px;">目前没有未通过的音乐哦</p>
+                  <div v-for="(item, index) in musics" :key="index">
+                    <div v-if="item.status == 2">
+      <el-card class="display_card"  shadow="none" style="--el-card-padding:2px; width:1000px;margin-left:20px; margin-right:0px; height:160px; border:0px">
+                    
+                      <el-row >
+                        <el-col :span="4" style="margin-top:16px; margin-left:0px;">
+                          <el-image :src="'/api/Music/Cover/' + item.musicId" style="width:120px; height: 120px;  border: 1px solid transparent;" fit="cover"/>
+                        </el-col>
+                        <el-col :span="4" style="margin-top:0px; margin-left:0px">
+                          <router-link :to="'/music/' + item.musicId">
+                            <p style="margin-left: 0px; font-size: 16px;">{{ item.name }}</p>
+                          </router-link>
+                          <p style="margin-left: 0px; font-size: 14px; margin-top:-10px; color: #888">{{ item.album }}</p>
+                          <p style="margin-left: 0px; font-size: 14px; margin-top:-10px; color: #888">{{ item.users[0].nickname }}</p>
+                          <p style="margin-left: 0px; font-size: 14px; margin-top:-10px;margin-bottom:10px; color: #888; white-space: nowrap">{{ formatDateTime(item.createdTime) }}</p>
+                          <el-icon color="#888" style="font-size: 14px; margin-top:0px"><Headset /></el-icon>
+                          <span style="margin-left: 3px; font-size: 14px; margin-top:0px; color: #888">{{ item.view }}</span>
+                          <p style="position: relative;z-index:10; margin-left:-78px; margin-top:-24px;">
+                            <span style="background:black; margin-left: 0px; font-size: 12px; margin-top:0px; color: white">{{ timeFormat(item.length) }}</span>
+                          </p>
+                          
+                        </el-col>
+
+                          <el-button  style="width:80px; margin-top:100px; margin-left:376px; --el-color-primary:#FFA500" plain>编辑</el-button>
+                          <el-button  style="width:80px; margin-top:100px; margin-left:20px; --el-color-primary:#FFA500" plain>删除</el-button>
+                          <div style="display:inline-block; margin-top:40px;">
+                          <span style="margin-left: -140px; font-size: 14px; color: red">稿件审核未通过</span>
+                        </div>
+                    </el-row>
+                  
+                </el-card>
+                <el-divider style="margin-left:20px; width:890px; margin-top:0px; margin-bottom:0px"/>
+              </div>
+            </div>
+
+              <div style="margin-bottom:40px" />
+
+
+                </el-tab-pane>
+      </el-tabs>
+
     </el-card>
   </el-container>
 </template>
