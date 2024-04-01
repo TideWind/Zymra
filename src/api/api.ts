@@ -199,4 +199,33 @@ export default {
             mock: false
         })
     },
+    getFans(params) {
+        return request({
+            url: '/User/GetFans/' + params,
+            method: 'get',
+            mock: false
+        })
+    },
+    editMusic(params) {
+        return request({
+            url: '/Music/EditMusic',
+            method: 'put',
+            data: params,
+            mock: false
+        })
+    },
+    deleteMusic(params) {
+        return request({
+            url: '/Music/DeleteMusic/' + params,
+            method: 'delete',
+            mock: false
+        })
+    },
+    getMusicStatus(params) {
+        return request({
+            url: '/Music/GetMusicStatus/' + params,
+            method: 'get',
+            mock: false
+        })
+    },
 }

@@ -7,7 +7,6 @@ import Cookies from 'js-cookie'
 const router = useRouter();
 
 onMounted(() =>{
-  getSelfUserAvatar()
   getSelfUserInfo()
 })
 
@@ -23,11 +22,14 @@ const userInfo = ref({
   userDescribe : '',
 })
 
+const avatarSrc = ref('/api/User/Avatar/' + Cookies.get('current_username') + '?' + new Date().getTime())
+
 const handleAvatarSuccess: UploadProps['onSuccess'] = (
   response,
   uploadFile
 ) => {
   isHasAvatar.value = true
+  avatarSrc.value = '/api/User/Avatar/' + Cookies.get('current_username') + '?' + new Date().getTime()
 }
 
 const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
@@ -43,8 +45,6 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
 
 const { proxy } = getCurrentInstance()
 
-const isHasAvatar = ref(false)
-
 let handleFileUpload = async (rawFile) => {
   const formData = new FormData();
   formData.append('file', rawFile.file);
@@ -53,19 +53,6 @@ let handleFileUpload = async (rawFile) => {
   if (res.status == 200) {
     ElMessage({message: '头像已上传！', type: 'success',})
   } 
-}
-
-let getSelfUserAvatar = async () => {
-  let res = await proxy.$api.getUserAvatar(Cookies.get('current_username'))
-  //console.log(res)
-  if (res.status == 200) {
-    isHasAvatar.value = true
-  }
-  else
-  {
-    isHasAvatar.value = false
-  }
-  console.log(isHasAvatar.value)
 }
 
 let getSelfUserInfo = async () => {
@@ -91,7 +78,13 @@ let uploadUserInfo = async () => {
   } 
 }
 
+const isHasAvatar = ref(true)
+
 const showIcon = ref(false);
+
+const handleImageError = () => {
+  isHasAvatar.value = false
+}
 
 </script>
 
@@ -112,7 +105,7 @@ const showIcon = ref(false);
                         :http-request="handleFileUpload"
                         @mouseenter="showIcon = true" @mouseleave="showIcon = false"
                       >
-                        <el-image style="width: 172px; height: 172px;" v-if="isHasAvatar" :src="'/api/User/Avatar/' + Cookies.get('current_username')" class="avatar" :fit="cover" />
+                        <el-image v-if="isHasAvatar" style="width: 172px; height: 172px;" :src="avatarSrc" @error="handleImageError" class="avatar" :fit="cover" />
                         <el-icon v-if="showIcon && isHasAvatar" style="position:absolute;" class="avatar-edit-icon"><Edit /></el-icon>
                         <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
                         

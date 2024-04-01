@@ -72,7 +72,7 @@ function request(options) {
     // 如果可以从cookie中获取到access_token，就添加到header中
     if (Cookies.get('access_token')) {
         // 设置token之前先检查是否需要更新token
-        tokenRefresher()
+        //tokenRefresher()
         service.defaults.headers.common['Authorization'] = `Bearer ${Cookies.get('access_token')}`
     }
     if (options.onUploadProgress) {

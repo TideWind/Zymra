@@ -7,7 +7,7 @@ const props = defineProps({
 
 onMounted(async() =>{
   getUserInfo()
-  await getFollows()
+  await getFans()
   for(const index in follows.value)
     {
       //console.log(follows.value[index])
@@ -28,11 +28,10 @@ let getUserInfo = async () => {
   }
 }
 
-let getFollows = async () => {
-  let res = await proxy.$api.getFollows(props.username)
+let getFans = async () => {
+  let res = await proxy.$api.getFans(props.username)
   if (res.status == 200) {
     follows.value = res.data
-    //console.log(follows.value)
   }
 }
 
@@ -54,6 +53,7 @@ const btnClick = async(event, username) =>
 let getFollowState = async (username) => {
   let res = await proxy.$api.getFollowState(username)
   if (res.status == 200) {
+    console.log(res.data)
     return res.data
   }
 }
@@ -78,9 +78,9 @@ let cancelFollowUser = async (username, clickedButton) => {
   <el-container style="display: grid; place-items: center;">
     <el-card class="card" style="width:1080px; min-height:700px">
 
-      <p style="font-size:18px; margin-left:20px"><router-link :to="'/user/' + username">{{ nickname }}</router-link>的关注</p>    
+      <p style="font-size:18px; margin-left:20px"><router-link :to="'/user/' + username">{{ nickname }}</router-link>的粉丝</p>    
             <el-divider style="margin-left:20px; width:980px; margin-top:10px; margin-bottom:0px"/>
-            <p v-if="follows.length == 0" style="text-align:center; color:#888; margin-top:30px;">目前没有关注的用户哦</p>
+            <p v-if="follows.length == 0" style="text-align:center; color:#888; margin-top:30px;">目前没有粉丝哦</p>
                   <div v-for="(item, index) in follows" :key="index">
       <el-card class="display_card"  shadow="none" style="--el-card-padding:2px; width:1000px;margin-left:20px; margin-right:0px; height:100px; border:0px">
                     

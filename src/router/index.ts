@@ -16,6 +16,8 @@ import Submit from "../views/Submit.vue"
 import Works from "../views/Works.vue"
 import Data from "../views/Data.vue"
 import Follow from "../views/Follow.vue"
+import Fans from "../views/Fans.vue"
+import MusicEdit from "../views/MusicEdit.vue"
 
 const routes = [
   {
@@ -58,6 +60,12 @@ const routes = [
       name:"Follow",
       props: true,
       component: Follow,
+    },
+    {
+      path: "/fans/:username",
+      name:"Fans",
+      props: true,
+      component: Fans,
     },
     {
       path: "/user/:username",
@@ -105,6 +113,12 @@ const routes = [
         path: "/create/data",
         name:"Data",
         component: Data,
+      },
+      {
+        path: "/create/edit/:music_id",
+        name:"MusicEdit",
+        props: true,
+        component: MusicEdit,
       },
     ]},
   ]},

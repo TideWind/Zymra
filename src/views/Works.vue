@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, getCurrentInstance } from "vue"
 import { Headset } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 
 onMounted(() =>{
   getSelfMusics()
@@ -38,6 +39,20 @@ const formatDateTime = (dateTimeString) => {
 
 const activeTab = ref('all')
 
+const confirmDelete = (music_id) =>
+{
+  deleteMusic(music_id)
+}
+
+let deleteMusic = async (music_id) => {
+  let res = await proxy.$api.deleteMusic(music_id)
+  //console.log(res)
+  if (res.status == 200) {
+    ElMessage({ message: '稿件删除成功！', type: 'success' });
+    getSelfMusics()
+  }
+}
+
 </script>
 
 <template>
@@ -55,7 +70,7 @@ const activeTab = ref('all')
                     
                       <el-row >
                         <el-col :span="4" style="margin-top:16px; margin-left:0px;">
-                          <el-image :src="'/api/Music/Cover/' + item.musicId" style="width:120px; height: 120px;  border: 1px solid transparent;" fit="cover"/>
+                          <el-image :src="'/api/Music/Cover/' + item.musicId + '?' + new Date().getTime()" style="width:120px; height: 120px;  border: 1px solid transparent;" fit="cover"/>
                         </el-col>
                         <el-col :span="4" style="margin-top:0px; margin-left:0px">
                           <router-link :to="'/music/' + item.musicId">
@@ -72,8 +87,20 @@ const activeTab = ref('all')
                           
                         </el-col>
 
-                          <el-button  style="width:80px; margin-top:100px; margin-left:376px; --el-color-primary:#FFA500" plain>编辑</el-button>
-                          <el-button  style="width:80px; margin-top:100px; margin-left:20px; --el-color-primary:#FFA500" plain>删除</el-button>
+                        <router-link :to="'/create/edit/' + item.musicId" style="margin-top:100px; margin-left:376px; height:34px">
+                          <el-button  style="width:80px; --el-color-primary:#FFA500" plain>编辑</el-button>
+                        </router-link>
+                        <el-popconfirm
+                          confirm-button-text="确认"
+                          cancel-button-text="取消"
+                          title="确定要永久性删除稿件吗？"
+                          width="220px"
+                          @confirm="confirmDelete(item.musicId)"
+                        >
+                          <template #reference>
+                            <el-button  style="width:80px; margin-top:100px; margin-left:20px; --el-color-primary:#FFA500" plain>删除</el-button>
+                          </template>
+                        </el-popconfirm>
                         <div v-if="item.status == 0" style="display:inline-block; margin-top:40px;">
                           <span style="margin-left: -124px; font-size: 14px; color: #888">稿件审核中</span>
                         </div>
@@ -264,3 +291,19 @@ a:hover {
   color: #ea9800;
 }
 </style>
+
+<style>
+  .el-popconfirm__action {
+  .el-button:nth-child(2) {
+    --el-button-bg-color: rgb(255, 246, 230);
+    --el-button-text-color: #FFA500;
+    --el-button-border-color: rgb(255, 210, 128);
+    --el-button-hover-text-color: var(--el-color-white);
+    --el-button-hover-bg-color: #FFA500;
+    --el-button-hover-border-color: #FFA500;
+    --el-button-active-bg-color: rgb(208, 136, 4);
+    --el-button-active-text-color: var(--el-color-white);
+    --el-button-active-border-color: rgb(208, 136, 4);
+  }
+}
+  </style>

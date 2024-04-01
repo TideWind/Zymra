@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, getCurrentInstance } from "vue"
+import { ref, onMounted, onBeforeUnmount, getCurrentInstance, onBeforeMount  } from "vue"
 import { useRouter } from "vue-router";
 import store from '../store/index.ts';
 import { ArrowDownBold, ArrowUpBold } from '@element-plus/icons-vue'
@@ -22,6 +22,14 @@ const props = defineProps({
 
 const intervalId = ref();
 
+onBeforeMount(async() =>{
+  const musicStatus = await getMusicStatus()
+  if(musicStatus != 1)
+  {
+    router.push('/NotFound')
+  }
+})
+
 onMounted(() =>{
   intervalId.value = setInterval(updatePlayTimePerTime, 1)
   getLikeState()
@@ -34,6 +42,20 @@ onBeforeUnmount(() => {
 });
 
 const { proxy } = getCurrentInstance()
+
+let getMusicStatus = async () => {
+  let res = await proxy.$api.getMusicStatus(props.music_id)
+  if (res.status == 200) {
+    console.log(res.data)
+    return res.data
+  }
+  else
+  {
+    console.log(456)
+    router.push('/404')
+  }
+    
+}
 
 const record = ref()
 const record_bg = ref()

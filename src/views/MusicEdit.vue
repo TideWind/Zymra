@@ -8,8 +8,12 @@ import { ElMessage, ElLoading } from 'element-plus'
 
 import SubmitSuccess from "../components/SubmitSuccess.vue"
 
-onMounted(() =>{
+const props = defineProps({
+  music_id: String
+})
 
+onMounted(() =>{
+  getMusicInfo()
 })
 
 const audioUpload = ref()
@@ -25,6 +29,24 @@ const form = ref({
   cover: null,
   audio: null
 })
+
+let getMusicInfo = async () => {
+  let res = await proxy.$api.getMusicInfo(props.music_id)
+  if (res.status == 200) {
+    form.value.name = res.data.name
+    form.value.album = res.data.album
+    form.value.lyric = res.data.lyric
+    switch (res.data.class)
+    {
+      case 0 : form.value.type = "popular"; break;
+      case 1 : form.value.type = "rock"; break;
+      case 2 : form.value.type = "ballad"; break;
+      case 3 : form.value.type = "electron"; break;
+    }
+    form.value.tags = res.data.musicTags.map(item => item.tag)
+    console.log(form.value.tags)
+  }
+}
 
 const tagTyping = ref<string>('')
 
@@ -62,12 +84,15 @@ const { proxy } = getCurrentInstance()
 
 let uploadMusic = async () => {
 
+  
   audioUpload.value!.submit()
   coverUpload.value!.submit()
 
   for (const key in form.value) {
     if (form.value.hasOwnProperty(key)) {
       const value = form.value[key];
+      if(key == "audio" || key == "cover")
+        break
       if (value == '' || value == null) {
         console.log(value, key)
         ElMessage({message: '请将信息填写完整！', type: 'error',})
@@ -77,20 +102,34 @@ let uploadMusic = async () => {
   }
 
   isSubmit.value = true
-  
+
   const formData = new FormData();
-  formData.append('audio', form.value.audio)
-  formData.append('cover', form.value.cover)
+  formData.append('music_id', props.music_id)
+
+  if(form.value.audio != null && filelist.length != 0)
+  {
+    formData.append('audio', form.value.audio)
+    const duration:number = await getAudioDuration(form.value.audio);
+    let length_minute = parseInt(duration / 60 + '')
+    let length_second = parseInt(duration % 60 + '')
+    formData.append('length_minute', length_minute)
+    formData.append('length_second', length_second)
+  }
+  else
+  {
+    formData.append('audio', null)
+    formData.append('length_minute', null)
+    formData.append('length_second', null)
+  }
+  
+  if(form.value.cover != null)
+    formData.append('cover', form.value.cover)
+  else
+    formData.append('cover', null)
+
   formData.append('name', form.value.name)
   formData.append('album', form.value.album)
   formData.append('type', form.value.type)
-
-  const duration:number = await getAudioDuration(form.value.audio);
-  let length_minute = parseInt(duration / 60 + '')
-  let length_second = parseInt(duration % 60 + '')
-
-  formData.append('length_minute', length_minute)
-  formData.append('length_second', length_second)
 
   for(const tag of form.value.tags)
   {
@@ -102,14 +141,11 @@ let uploadMusic = async () => {
   //const loadingInstance = ElLoading.service({ fullscreen: true, text: '上传中...' });
 
     try {
-        let res = await proxy.$api.uploadMusic(formData, { onUploadProgress: progressEvent => {
-        const { loaded, total } = progressEvent;
-        console.log(`Uploaded ${loaded}/${total}`); }
-        });
+        let res = await proxy.$api.editMusic(formData);
         //console.log(res.status)
         //console.log(res)
-        if (res.status == 201) {
-            ElMessage({ message: '投稿成功！请等待审核！', type: 'success' });
+        if (res.status == 200) {
+            ElMessage({ message: '修改成功！请等待审核！', type: 'success' });
             isSubmitSuccess.value = true
         }
     } catch (error) {
@@ -168,7 +204,8 @@ const audioOnChange = (uploadFile, uploadFiles) => {
   //form.value.audio = uploadFile.raw
 }
 
-const coverSrc = ref()
+const coverSrc = ref(null)
+const rawCoverSrc = ref('/api/Music/Cover/' + props.music_id + '?' + new Date().getTime())
 
 const coverOnChange = (uploadFile, uploadFiles) => {
   if (!(uploadFile.raw.type == 'image/jpeg' || uploadFile.raw.type == 'image/png')) {
@@ -212,8 +249,13 @@ const filelist = ref([])
             拖拽到此处也可上传
           </div>
           <div class="container_justify">
-            <el-button style="width:140px; margin-top:20px; margin-bottom:30px" color="#FFA500" plain>上传音频</el-button>
+            <el-button style="width:140px; margin-top:20px; margin-bottom:30px" color="#FFA500" plain>重新上传音频</el-button>
           </div>
+          <template #tip>
+            <div class="el-upload__tip">
+              如果音频内容没有更改，则无需重新上传
+            </div>
+          </template>
         </el-upload>
 
         <el-form-item style="margin-top:40px" label="音乐封面">
@@ -230,9 +272,9 @@ const filelist = ref([])
             :on-change="(uploadFile,uploadFiles) => coverOnChange(uploadFile,uploadFiles)"
             @mouseenter="showIcon = true" @mouseleave="showIcon = false"
           >
-            <el-image style="width: 232px; height: 232px;" v-if="form.cover" :src="coverSrc" class="avatar" :fit="cover" />
-            <el-icon v-if="showIcon && form.cover" style="position:absolute;" class="avatar-edit-icon"><Edit /></el-icon>
-            <el-icon v-else class="cover-uploader-icon"><Plus /></el-icon>
+            <el-image v-if="coverSrc" style="width: 232px; height: 232px;" :src="coverSrc" class="avatar" :fit="cover" />
+            <el-image v-else style="width: 232px; height: 232px;" :src="rawCoverSrc" class="avatar" :fit="cover" />
+            <el-icon v-if="showIcon" style="position:absolute;" class="avatar-edit-icon"><Edit /></el-icon>
           </el-upload>
         </el-card>
         </el-form-item>
@@ -271,7 +313,7 @@ const filelist = ref([])
       </el-form>
 
       <div class="container_justify">
-        <el-button color="#FFA500" :loading="isSubmit" style="width:100px; margin-top:20px; margin-bottom:60px" @click="onSubmit" plain>投稿</el-button>
+        <el-button color="#FFA500" :loading="isSubmit" style="width:100px; margin-top:20px; margin-bottom:60px" @click="onSubmit" plain>重新投稿</el-button>
       </div>
                   
     </el-card>

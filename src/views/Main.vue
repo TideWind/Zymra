@@ -14,7 +14,7 @@ import Footer from '../components/Footer.vue'
             <router-view v-slot="{ Component }">
               <template v-if="Component">
 
-                  <KeepAlive>
+                  <!-- <KeepAlive> -->
                     <suspense>
                       <Transition name="fade">
                         <component :is="Component"></component>
@@ -27,7 +27,7 @@ import Footer from '../components/Footer.vue'
                         </div>
                       </template>
                     </suspense>
-                  </KeepAlive>
+                  <!-- </KeepAlive> -->
 
               </template>
             </router-view>
