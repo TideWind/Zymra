@@ -141,7 +141,7 @@ let getRecommendMusics = async () => {
 }
 
 let getPopularMusics = async () => {
-  let res = await proxy.$api.getPopularMusics(9)
+  let res = await proxy.$api.getYearPopularMusics(9)
   if (res.status == 200) {
     display_chart.value = res.data;
     //console.log(res.data)

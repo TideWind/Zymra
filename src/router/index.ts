@@ -18,6 +18,7 @@ import Data from "../views/Data.vue"
 import Follow from "../views/Follow.vue"
 import Fans from "../views/Fans.vue"
 import MusicEdit from "../views/MusicEdit.vue"
+import Rank from "../views/Rank.vue"
 
 const routes = [
   {
@@ -35,12 +36,6 @@ const routes = [
       component: NotFound,
     },
     {
-      path: "/music/:mid",
-      name:"Music",
-      component: NotFound,
-      props: true,
-    },
-    {
       path: "/list",
       name:"List",
       component: NotFound,
@@ -48,7 +43,7 @@ const routes = [
     {
       path: "/rank",
       name:"Rank",
-      component: NotFound,
+      component: Rank,
     },
     {
       path: "/explore",

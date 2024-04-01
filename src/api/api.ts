@@ -87,9 +87,23 @@ export default {
             mock: false
         })
     },
-    getPopularMusics(params) {
+    getYearPopularMusics(params) {
         return request({
-            url: '/Music/GetPopularMusics/' + params,
+            url: '/Music/GetYearPopularMusics/' + params,
+            method: 'get',
+            mock: false
+        })
+    },
+    getMonthPopularMusics(params) {
+        return request({
+            url: '/Music/GetMonthPopularMusics/' + params,
+            method: 'get',
+            mock: false
+        })
+    },
+    getWeekPopularMusics(params) {
+        return request({
+            url: '/Music/GetWeekPopularMusics/' + params,
             method: 'get',
             mock: false
         })
