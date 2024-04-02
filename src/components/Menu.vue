@@ -18,7 +18,7 @@
         <template #title>发现音乐</template>
         <el-menu-item index="/list">作品检索</el-menu-item>
         <el-menu-item index="/rank">排行榜</el-menu-item>
-        <el-menu-item index="/explore">探索</el-menu-item>
+        <el-menu-item index="/explore">猜你想听</el-menu-item>
       </el-sub-menu>
       <el-menu-item :index="'/follow' + username">关注</el-menu-item>
       <el-menu-item index="/create">音乐创作</el-menu-item>

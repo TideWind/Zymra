@@ -19,6 +19,8 @@ import Follow from "../views/Follow.vue"
 import Fans from "../views/Fans.vue"
 import MusicEdit from "../views/MusicEdit.vue"
 import Rank from "../views/Rank.vue"
+import Explore from "../views/Explore.vue"
+import List from "../views/List.vue"
 
 const routes = [
   {
@@ -38,7 +40,7 @@ const routes = [
     {
       path: "/list",
       name:"List",
-      component: NotFound,
+      component: List,
     },
     {
       path: "/rank",
@@ -48,7 +50,7 @@ const routes = [
     {
       path: "/explore",
       name:"Explore",
-      component: NotFound,
+      component: Explore,
     },
     {
       path: "/follow/:username",

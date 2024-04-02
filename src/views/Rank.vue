@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted, getCurrentInstance } from "vue"
-import { Headset } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
 
 onMounted(() =>{
   getYearPopularMusics()
@@ -269,19 +267,3 @@ a{
   color: black;
 }
 </style>
-
-<style>
-  .el-popconfirm__action {
-  .el-button:nth-child(2) {
-    --el-button-bg-color: rgb(255, 246, 230);
-    --el-button-text-color: #FFA500;
-    --el-button-border-color: rgb(255, 210, 128);
-    --el-button-hover-text-color: var(--el-color-white);
-    --el-button-hover-bg-color: #FFA500;
-    --el-button-hover-border-color: #FFA500;
-    --el-button-active-bg-color: rgb(208, 136, 4);
-    --el-button-active-text-color: var(--el-color-white);
-    --el-button-active-border-color: rgb(208, 136, 4);
-  }
-}
-  </style>
