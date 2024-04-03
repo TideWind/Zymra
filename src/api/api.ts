@@ -242,4 +242,27 @@ export default {
             mock: false
         })
     },
+    searchMusic(params) {
+        return request({
+            url: '/Music/SearchMusic',
+            method: 'get',
+            data: params,
+            mock: false
+        })
+    },
+    searchUser(params) {
+        return request({
+            url: '/User/SearchUser',
+            method: 'get',
+            data: params,
+            mock: false
+        })
+    },
+    getTypeView(params) {
+        return request({
+            url: '/Music/GetTypeView/' + params,
+            method: 'get',
+            mock: false
+        })
+    },
 }

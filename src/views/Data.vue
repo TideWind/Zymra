@@ -37,7 +37,7 @@ let getSelfData = async () => {
               累计播放量
               <el-tooltip
                 effect="dark"
-                content="累计播放量，增长量是相对于前一天的增量"
+                content="累计播放量，增长量是相对于前一天的增量，8:00结算"
                 placement="top"
               >
                 <el-icon style="margin-left: 4px" :size="12">

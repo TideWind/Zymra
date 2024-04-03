@@ -24,10 +24,11 @@
       <el-menu-item index="/create">音乐创作</el-menu-item>
       <el-input
         v-model="input_search"
-        style="width: 240px; height: 30px; margin-left: 10px; margin-right: 10px;"
+        style="width: 240px; height: 30px; margin-left: 10px; --el-color-primary:#FFA500"
         placeholder="搜索音乐/用户"
         :prefix-icon="Search"
       />
+      <el-button @click="search" clearable style="z-index:10; width: 40px; height: 30px; margin-left: -40px; margin-right: 10px" color="#FFA500" plain><el-icon><Search/></el-icon></el-button>
       <el-menu-item :index="'/user' + username" @click="getSelfUsername">个人中心</el-menu-item>
     </el-menu>
   </template>
@@ -84,6 +85,11 @@
   activeMenu.value = path.replace(/^\//, ''); // 将当前路径和激活菜单绑定
   //console.log(activeMenu.value);
 });
+
+const search = () => {
+  router.push({name: 'List', query: { keyword: input_search.value },});
+  input_search.value = ''
+}
   </script>
 
 <style scoped>
@@ -102,5 +108,11 @@
 }
 .el-menu--horizontal.el-menu {
     border-bottom: 0;
+}
+</style>
+
+<style>
+.el-input__inner {
+  padding-right:40px;
 }
 </style>

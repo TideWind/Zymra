@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, getCurrentInstance } from "vue"
+import Cookies from 'js-cookie'
 
 const props = defineProps({
     username: String
@@ -37,6 +38,11 @@ let getFans = async () => {
 
 const btnClick = async(event, username) =>
 {
+  if(!Cookies.get('access_token'))
+  {
+    router.push({name: 'Login'})
+    return false
+  }
   const clickedButton = event.target
   const isFollowd = await getFollowState(username)
   console.log(isFollowd)
@@ -51,6 +57,8 @@ const btnClick = async(event, username) =>
 }
 
 let getFollowState = async (username) => {
+  if(!Cookies.get('access_token'))
+    return false
   let res = await proxy.$api.getFollowState(username)
   if (res.status == 200) {
     console.log(res.data)

@@ -3,6 +3,7 @@ import { ref, onMounted, onBeforeUnmount, getCurrentInstance, onBeforeMount  } f
 import { useRouter } from "vue-router";
 import store from '../store/index.ts';
 import { ArrowDownBold, ArrowUpBold } from '@element-plus/icons-vue'
+import Cookies from 'js-cookie'
 
 import music_play_icon from '../assets/images/icon/music_play_icon.vue'
 import music_pause_icon from '../assets/images/icon/music_pause_icon.vue'
@@ -129,7 +130,11 @@ const inputPlayTime = () => {
 }
 
 const onBtnLickClicked = () => {
-  
+  if(!Cookies.get('access_token'))
+  {
+    router.push({name: 'Login'})
+    return false
+  }
   if(isLike.value == false)
   {
     likeMusic()

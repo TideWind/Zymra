@@ -40,6 +40,7 @@ const routes = [
     {
       path: "/list",
       name:"List",
+      props: true,
       component: List,
     },
     {

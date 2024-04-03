@@ -100,6 +100,8 @@ let getLikeCount = async () => {
 const isFollowd = ref(false)
 
 let getFollowState = async () => {
+  if(!Cookies.get('access_token'))
+    return false
   let res = await proxy.$api.getFollowState(props.username)
   if (res.status == 200) {
     isFollowd.value = res.data
@@ -125,6 +127,11 @@ const resetBtnText = () =>
 
 const follow = () =>
 {
+  if(!Cookies.get('access_token'))
+  {
+    router.push({name: 'Login'})
+    return false
+  }
   followUser()
 }
 

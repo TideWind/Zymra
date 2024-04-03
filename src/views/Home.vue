@@ -6,6 +6,7 @@ onMounted(() =>{
   getRecommendMusics()
   getPopularMusics()
   getNewMusics()
+  getTypeView()
 })
 
 const banner_images = ref([
@@ -49,9 +50,9 @@ const new_rows = computed(() => {
 
 import { useRouter } from "vue-router";
 const router = useRouter();
-const clickClassCard = (tag:string) => {
-      console.log(tag);
-      router.push({name: 'List', params: {tag: tag }});
+const clickClassCard = (type:string) => {
+      //console.log(type);
+      router.push({name: 'List', query: { type:type },});
 }
 
 const canDataLoad = ref(false);
@@ -64,10 +65,10 @@ const canDataLoad = ref(false);
             const DOMRectInfo = target?.getBoundingClientRect()
             // console.log(DOMRectInfo);
             if (DOMRectInfo?.top <= clientHight && DOMRectInfo?.top > clientHight - DOMRectInfo?.height) {
-              view_popular.value = view_popular_num;
-              view_rock.value = view_rock_num;
-              view_ballad.value = view_ballad_num;
-              view_electron.value = view_electron_num;
+              view_popular.value = view_popular_num.value;
+              view_rock.value = view_rock_num.value;
+              view_ballad.value = view_ballad_num.value;
+              view_electron.value = view_electron_num.value;
                 //console.log('目标元素进入可视区');
             } else if (DOMRectInfo?.top <= 0 && DOMRectInfo?.top > -DOMRectInfo?.height) {;
                 //console.log('目标元素正在离开可视区');
@@ -80,10 +81,10 @@ const canDataLoad = ref(false);
             }
  
             if (DOMRectInfo?.bottom <= clientHight && DOMRectInfo?.bottom > DOMRectInfo?.height) {
-              view_popular.value = view_popular_num;
-              view_rock.value = view_rock_num;
-              view_ballad.value = view_ballad_num;
-              view_electron.value = view_electron_num;
+              view_popular.value = view_popular_num.value;
+              view_rock.value = view_rock_num.value;
+              view_ballad.value = view_ballad_num.value;
+              view_electron.value = view_electron_num.value;
                 //console.log('目标元素完全进入可视区');
             } else if (DOMRectInfo?.bottom <= 0) {
                 //console.log('目标元素完全离开可视区');
@@ -96,10 +97,10 @@ const canDataLoad = ref(false);
             }
         })
 
-const view_popular_num = 964207;
-const view_rock_num = 872349;
-const view_ballad_num = 530816;
-const view_electron_num = 215678;
+const view_popular_num = ref(0);
+const view_rock_num = ref(0);
+const view_ballad_num = ref(0);
+const view_electron_num = ref(0);
 
 
 import { useTransition } from '@vueuse/core'
@@ -108,10 +109,10 @@ const view_rock = ref(0);
 const view_ballad = ref(0);
 const view_electron = ref(0);
 
-view_popular.value = view_popular_num;
-view_rock.value = view_rock_num;
-view_ballad.value = view_ballad_num;
-view_electron.value = view_electron_num;
+view_popular.value = view_popular_num.value;
+view_rock.value = view_rock_num.value;
+view_ballad.value = view_ballad_num.value;
+view_electron.value = view_electron_num.value;
 
 const view_popular_outputValue = useTransition(view_popular, {
   duration: 1000,
@@ -156,6 +157,24 @@ let getNewMusics = async () => {
   }
 }
 
+let getTypeView = async () => {
+  let res1 = await proxy.$api.getTypeView('popular')
+  if (res1.status == 200) {
+    view_popular_num.value = res1.data;
+  }
+  let res2 = await proxy.$api.getTypeView('rock')
+  if (res2.status == 200) {
+    view_rock_num.value = res2.data;
+  }
+  let res3 = await proxy.$api.getTypeView('ballad')
+  if (res3.status == 200) {
+    view_ballad_num.value = res3.data;
+  }
+  let res4 = await proxy.$api.getTypeView('electron')
+  if (res4.status == 200) {
+    view_electron_num.value = res4.data;
+  }
+}
 
 </script>
 
@@ -205,7 +224,7 @@ let getNewMusics = async () => {
                   background: linear-gradient(to top right,
                   rgb(179, 252, 95),
                   rgb(36, 118, 58));" 
-                  @click="clickClassCard('popular')"
+                  @click="clickClassCard('Popular')"
                 >
                   <p style="font-size: 14px">流行</p>
                   <el-divider/>
@@ -216,7 +235,7 @@ let getNewMusics = async () => {
                   background: linear-gradient(to top right,
                   rgb(254, 151, 153),
                   rgb(210, 8, 8));" 
-                  @click="clickClassCard('rock')"
+                  @click="clickClassCard('Rock')"
                 >
                   <p style="font-size: 14px">摇滚</p>
                   <el-divider/>
@@ -227,7 +246,7 @@ let getNewMusics = async () => {
                   background: linear-gradient(to top right,
                   rgb(250, 214, 143),
                   rgb(225, 131, 0));" 
-                  @click="clickClassCard('ballad')"
+                  @click="clickClassCard('Ballad')"
                 >
                   <p style="font-size: 14px">民谣</p>
                   <el-divider/>
@@ -238,7 +257,7 @@ let getNewMusics = async () => {
                   background: linear-gradient(to top right,
                   rgb(159, 221, 252),
                   rgb(12, 129, 196));"
-                  @click="clickClassCard('electron')"
+                  @click="clickClassCard('Electron')"
                 >
                   <p style="font-size: 14px">电子</p>
                   <el-divider/>
@@ -250,7 +269,7 @@ let getNewMusics = async () => {
                 <div class="container_align" style="margin-top:40px;">
                   <img src="../assets/images/icon/music_point.svg" style="width:4%" alt="" />
                   <span style="font-weight: bold; margin-left:5px">新歌发布</span>
-                  <router-link :to="{path: '/list', params: {order: 'time_des' }}" style="margin-left:80%">
+                  <router-link :to="{name: 'List', query: {order: 'Des' }}" style="margin-left:80%">
                     <p style="font-size: 14px; color: #888">更多></p>
                   </router-link>
                 </div>
