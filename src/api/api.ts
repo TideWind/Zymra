@@ -265,4 +265,18 @@ export default {
             mock: false
         })
     },
+    getRole(params) {
+        return request({
+            url: '/auth/GetRole',
+            method: 'get',
+            mock: false
+        })
+    },
+    getPendingMusics(params) {
+        return request({
+            url: '/Music/GetPendingMusics',
+            method: 'get',
+            mock: false
+        })
+    },
 }

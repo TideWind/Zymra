@@ -25,7 +25,14 @@ const intervalId = ref();
 
 onBeforeMount(async() =>{
   const musicStatus = await getMusicStatus()
-  if(musicStatus != 1)
+  
+  if(musicStatus != 1 && !Cookies.get('access_token'))
+  {
+    router.push('/NotFound')
+  }
+
+  const isAdmin = await getRole()
+  if(musicStatus != 1 && !isAdmin)
   {
     router.push('/NotFound')
   }
@@ -52,10 +59,21 @@ let getMusicStatus = async () => {
   }
   else
   {
-    console.log(456)
-    router.push('/404')
+    return -1
   }
-    
+}
+
+let getRole = async () => {
+  let res = await proxy.$api.getRole()
+  if (res.status == 200) {
+    //console.log(res.data)
+    if(res.data.includes('admin'))
+      return true
+    else
+      return false
+  }
+  else
+    return false
 }
 
 const record = ref()

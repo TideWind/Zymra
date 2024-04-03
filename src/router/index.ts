@@ -21,6 +21,7 @@ import MusicEdit from "../views/MusicEdit.vue"
 import Rank from "../views/Rank.vue"
 import Explore from "../views/Explore.vue"
 import List from "../views/List.vue"
+import Audit from "../views/Audit.vue"
 
 const routes = [
   {
@@ -118,6 +119,11 @@ const routes = [
         props: true,
         component: MusicEdit,
       },
+      {
+        path: "/create/audit",
+        name:"Audit",
+        component: Audit,
+      },
     ]},
   ]},
 ];
@@ -147,7 +153,7 @@ router.afterEach((to,from,next) => {
 router.beforeEach((to, from, next) => {
   store.commit('getAccessToken')
   const token = store.state.access_token
-  if (!token && (to.path == '/user' || to.path == '/follow' || to.path == '/create' || to.path == '/create/submit'))
+  if (!token && (to.path == '/user' || to.path == '/follow' || to.name == 'Submit' || to.name == 'Works' || to.name == 'Data' || to.name == 'MusicEdit' || to.name == 'Audit'))
   {
     next({ path: '/login' })
   } else if (token && to.path == '/login') 

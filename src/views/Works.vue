@@ -145,8 +145,20 @@ let deleteMusic = async (music_id) => {
                           
                         </el-col>
 
-                          <el-button  style="width:80px; margin-top:100px; margin-left:376px; --el-color-primary:#FFA500" plain>编辑</el-button>
-                          <el-button  style="width:80px; margin-top:100px; margin-left:20px; --el-color-primary:#FFA500" plain>删除</el-button>
+                        <router-link :to="'/create/edit/' + item.musicId" style="margin-top:100px; margin-left:376px; height:34px">
+                          <el-button  style="width:80px; --el-color-primary:#FFA500" plain>编辑</el-button>
+                        </router-link>
+                        <el-popconfirm
+                          confirm-button-text="确认"
+                          cancel-button-text="取消"
+                          title="确定要永久性删除稿件吗？"
+                          width="220px"
+                          @confirm="confirmDelete(item.musicId)"
+                        >
+                          <template #reference>
+                            <el-button  style="width:80px; margin-top:100px; margin-left:20px; --el-color-primary:#FFA500" plain>删除</el-button>
+                          </template>
+                        </el-popconfirm>
                         <div style="display:inline-block; margin-top:40px;">
                           <span style="margin-left: -124px; font-size: 14px; color: #888">稿件审核中</span>
                         </div>
@@ -189,8 +201,20 @@ let deleteMusic = async (music_id) => {
                           
                         </el-col>
 
-                          <el-button  style="width:80px; margin-top:100px; margin-left:376px; --el-color-primary:#FFA500" plain>编辑</el-button>
-                          <el-button  style="width:80px; margin-top:100px; margin-left:20px; --el-color-primary:#FFA500" plain>删除</el-button>
+                        <router-link :to="'/create/edit/' + item.musicId" style="margin-top:100px; margin-left:376px; height:34px">
+                          <el-button  style="width:80px; --el-color-primary:#FFA500" plain>编辑</el-button>
+                        </router-link>
+                        <el-popconfirm
+                          confirm-button-text="确认"
+                          cancel-button-text="取消"
+                          title="确定要永久性删除稿件吗？"
+                          width="220px"
+                          @confirm="confirmDelete(item.musicId)"
+                        >
+                          <template #reference>
+                            <el-button  style="width:80px; margin-top:100px; margin-left:20px; --el-color-primary:#FFA500" plain>删除</el-button>
+                          </template>
+                        </el-popconfirm>
                     </el-row>
                   
                 </el-card>
@@ -230,8 +254,20 @@ let deleteMusic = async (music_id) => {
                           
                         </el-col>
 
-                          <el-button  style="width:80px; margin-top:100px; margin-left:376px; --el-color-primary:#FFA500" plain>编辑</el-button>
-                          <el-button  style="width:80px; margin-top:100px; margin-left:20px; --el-color-primary:#FFA500" plain>删除</el-button>
+                        <router-link :to="'/create/edit/' + item.musicId" style="margin-top:100px; margin-left:376px; height:34px">
+                          <el-button  style="width:80px; --el-color-primary:#FFA500" plain>编辑</el-button>
+                        </router-link>
+                        <el-popconfirm
+                          confirm-button-text="确认"
+                          cancel-button-text="取消"
+                          title="确定要永久性删除稿件吗？"
+                          width="220px"
+                          @confirm="confirmDelete(item.musicId)"
+                        >
+                          <template #reference>
+                            <el-button  style="width:80px; margin-top:100px; margin-left:20px; --el-color-primary:#FFA500" plain>删除</el-button>
+                          </template>
+                        </el-popconfirm>
                           <div style="display:inline-block; margin-top:40px;">
                           <span style="margin-left: -140px; font-size: 14px; color: red">稿件审核未通过</span>
                         </div>

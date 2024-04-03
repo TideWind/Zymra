@@ -6,16 +6,30 @@ import store from '../store/index.ts';
 import upload_icon from '../assets/images/icon/upload_icon.vue'
 import data_icon from '../assets/images/icon/data_icon.vue'
 import file_icon from '../assets/images/icon/file_icon.vue'
+import audit_icon from '../assets/images/icon/audit_icon.vue'
 
 const router = useRouter();
 
 onMounted(() =>{
+  getRole()
   const { path } = useRoute(); // 获取当前路径
   activeMenu.value = path; // 将当前路径和激活菜单绑定
-  console.log(activeMenu.value)
 })
 
-const activeMenu = ref<string>("");;
+const activeMenu = ref<string>("");
+
+const { proxy } = getCurrentInstance()
+
+const isAdmin = ref(false)
+
+let getRole = async () => {
+  let res = await proxy.$api.getRole()
+  if (res.status == 200) {
+    //console.log(res.data)
+    if(res.data.includes('admin'))
+      isAdmin.value = true
+  }
+}
 </script>
 
 <template>
@@ -36,6 +50,11 @@ const activeMenu = ref<string>("");;
         <el-menu-item index="/create/data">
           <el-icon><data_icon /></el-icon>
           <span style="margin-left:20px">数据</span>
+        </el-menu-item>
+
+        <el-menu-item v-if="isAdmin" index="/create/audit">
+          <el-icon><audit_icon /></el-icon>
+          <span style="margin-left:20px">审核</span>
         </el-menu-item>
 
       </el-menu>
