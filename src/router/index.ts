@@ -1,8 +1,8 @@
 
-// ������Ҫ��ģ��
 import { createRouter, createWebHistory } from "vue-router";
 import Cookies from "js-cookie"
 import store from '../store/index.ts'
+
 import Main from "../views/Main.vue";
 import NotFound from "../views/NotFound.vue";
 import Home from "../views/Home.vue";

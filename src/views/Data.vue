@@ -18,7 +18,7 @@ let getSelfData = async () => {
   let res = await proxy.$api.getSelfData()
   if (res.status == 200) {
     data.value = res.data;
-    console.log(data.value)
+    //console.log(data.value)
   }
 }
 
@@ -37,7 +37,7 @@ let getSelfData = async () => {
               累计播放量
               <el-tooltip
                 effect="dark"
-                content="累计播放量，增长量是相对于前一天的增量，8:00结算"
+                content="累计播放量，增长量是相对于前一天的增量"
                 placement="top"
               >
                 <el-icon style="margin-left: 4px" :size="12">
@@ -74,7 +74,7 @@ let getSelfData = async () => {
         <el-statistic :value="data.totalFans">
           <template #title>
             <div style="display: inline-flex; align-items: center">
-              累计粉丝数
+              粉丝数
             </div>
           </template>
         </el-statistic>

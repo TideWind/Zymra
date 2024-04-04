@@ -39,27 +39,28 @@ service.interceptors.response.use((res) => {
 let tokenRefresher = async () => {
     let router = useRouter()
     let now = new Date().getTime()
-    if (now - Cookies.get('last_token_refresh_time') > 1000 * 60 * 4) {
+    if (now - Cookies.get('last_token_refresh_time') > 1000 * 60 * 59) {//1000 * 60 * 4
         let res = await service({
             url: '/auth/refresh',
             method: 'post',
             headers: {
                 'Authorization': `Bearer ${Cookies.get('access_token')}`
             },
-            data: {
-                refresh: `${Cookies.get('refresh_token')}`
+            params: {
+                token: `${Cookies.get('refresh_token')}`
             }
         })
-        if (res.status === 200) {
-            store.commit('setAccessToken', res.data.access)
-        } else if (res.status === 403) {
-            // refresh token过期了，要求重新登录
-            store.commit('clearRefreshToken')
-            store.commit('clearAccessToken')
-            router.push({
-                name: 'login'
-            })
-        }
+        //console.log(res)
+         if (res.status === 200) {
+             store.commit('setAccessToken', res.data.access_token)
+         } else if (res.status === 401) {
+             // refresh token过期了，要求重新登录
+             store.commit('clearRefreshToken')
+             store.commit('clearAccessToken')
+             router.push({
+                 name: 'login'
+             })
+         }
     }
 }
 
@@ -72,7 +73,7 @@ function request(options) {
     // 如果可以从cookie中获取到access_token，就添加到header中
     if (Cookies.get('access_token')) {
         // 设置token之前先检查是否需要更新token
-        //tokenRefresher()
+        tokenRefresher()
         service.defaults.headers.common['Authorization'] = `Bearer ${Cookies.get('access_token')}`
     }
     if (options.onUploadProgress) {

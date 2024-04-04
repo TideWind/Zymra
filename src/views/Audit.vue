@@ -45,7 +45,7 @@ let getRefusedMusics = async () => {
   //console.log(res)
   if (res.status == 200) {
     refused_musics.value = res.data
-    console.log(refused_musics.value)
+    //console.log(refused_musics.value)
   }
 }
 

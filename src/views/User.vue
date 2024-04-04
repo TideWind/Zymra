@@ -33,11 +33,12 @@ const { proxy } = getCurrentInstance()
 
 let getUserInfo = async () => {
   let res = await proxy.$api.getUserInfo(props.username)
-  console.log(res)
+  //console.log(res)
   if (res.status == 200) {
     userInfo.value.userNickname = res.data.nickname
     userInfo.value.userName = res.data.username
     userInfo.value.userDescribe = res.data.describe
+    isUserInfoLoad.value = true
   }
 }
 
@@ -57,10 +58,18 @@ const activeTab = ref('works')
 const likeMusics = ref([])
 const userMusics = ref([])
 
+const isUserInfoLoad = ref(false)
+const isUserMusicLoad = ref(false)
+const isLikeMusicLoad = ref(false)
+const isFollowCountLoad = ref(false)
+const isFanCountLoad = ref(false)
+const isLikeCountLoad = ref(false)
+
 let getLikeMusics = async () => {
   let res = await proxy.$api.getLikeMusics(props.username)
   if (res.status == 200) {
     likeMusics.value = res.data
+    isLikeMusicLoad.value = true
     //console.log(likeMusics.value)
   }
 }
@@ -69,6 +78,7 @@ let getUserMusics = async () => {
   let res = await proxy.$api.getUserMusics(props.username)
   if (res.status == 200) {
     userMusics.value = res.data
+    isUserMusicLoad.value = true
     //console.log(res.data)
   }
 }
@@ -77,6 +87,7 @@ let getFollowCount = async () => {
   let res = await proxy.$api.getFollowCount(props.username)
   if (res.status == 200) {
     userFollowCount.value = res.data
+    isFollowCountLoad.value = true
     //console.log(res.data)
   }
 }
@@ -85,6 +96,7 @@ let getFanCount = async () => {
   let res = await proxy.$api.getFanCount(props.username)
   if (res.status == 200) {
     userFanCount.value = res.data
+    isFanCountLoad.value = true
     //console.log(res.data)
   }
 }
@@ -93,6 +105,7 @@ let getLikeCount = async () => {
   let res = await proxy.$api.getLikeCount(props.username)
   if (res.status == 200) {
     userLikeCount.value = res.data
+    isLikeCountLoad.value = true
     //console.log(res.data)
   }
 }
@@ -167,21 +180,50 @@ let cancelFollowUser = async () => {
 
                   <el-row style="margin-top: 30px; margin-bottom:40px;">
                     <el-card style="width: 180px; height: 180px; margin-left: 40px; --el-card-padding: 4px;" shadow="never">
-                      <el-image style="width: 172px; height: 172px;" :src="'/api/User/Avatar/' + username + '?' + new Date().getTime()" :fit="cover">
-                        <template #error>
-                          <div class="image-slot">
-                            <el-icon><icon-picture /></el-icon>
-                          </div>
-                        </template>
-                      </el-image>
+                          <el-image style="width: 172px; height: 172px;" :src="'/api/User/Avatar/' + username + '?' + new Date().getTime()" :fit="cover">
+                            <template #error>
+                              <div class="image-slot">
+                                <el-icon><icon-picture /></el-icon>
+                              </div>
+                            </template>
+                            <template #placeholder>
+                              <el-skeleton style="width: 172px" animated :count="1">
+                                <template #template>
+                                  <el-skeleton-item variant="image" style="width: 172px; height: 172px" />
+                                </template>
+                              </el-skeleton>
+                            </template>
+                          </el-image>
                     </el-card>
                     <div>
 
+                      <el-skeleton style="width: 240px" :loading="!isUserInfoLoad" animated :count="1">
+      <template #template>
+        <div style="padding: 14px">
+          <el-skeleton-item variant="h3" style="margin-left:26px; width: 50%" />
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-items: space-between;
+              margin-left:26px;
+              margin-top: 20px;
+              height: 16px;
+              margin-bottom:18px"
+          >
+            <el-skeleton-item variant="text" style="margin-right: 16px" />
+            <el-skeleton-item variant="text" style="width: 30%" />
+          </div>
+        </div>
+      </template>
+      <template #default>
                       <div style="display:inline-block;">
                         <p style="font-weight: bold; margin-top:4px; margin-left: 40px; font-size:26px">{{ userInfo.userNickname }}</p>
                         <p style="margin-top:-26px; margin-left: 40px; font-size:14px; color: #888">@{{ userInfo.userName }}</p>
                         <p style="margin-top:0px; margin-left: 40px; font-size:14px; color: #888">{{ userInfo.userDescribe }}</p>
                       </div>
+                    </template>
+    </el-skeleton>
 
                       <el-divider style="margin-top:0px; margin-left:30px; width:740px"/>
 
@@ -189,7 +231,25 @@ let cancelFollowUser = async () => {
                         
                         <div style="display:inline-block; margin-left: 20px; text-align: center;">
                           <router-link :to="'/follow/' + username">
+                            <el-skeleton style="width: 30px" :loading="!isFollowCountLoad" animated :count="1">
+                                <template #template>
+                                  <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-items: space-between;
+              margin-left:0px;
+              margin-top: 10px;
+              height: 50px;
+              margin-bottom:10px"
+          >
+            <el-skeleton-item variant="text" style="width: 100%" />
+          </div>
+                                </template>
+                                <template #default>
                             <p style="font-size:22px;">{{ userFollowCount }}</p>
+                          </template>
+    </el-skeleton>
                             <p style="font-size:14px; margin-top:-18px; color: #888">关注</p>
                           </router-link>
                         </div>
@@ -198,7 +258,25 @@ let cancelFollowUser = async () => {
 
                         <div style="display:inline-block; margin-left: 20px; text-align: center;">
                           <router-link :to="'/fans/' + username">
+                            <el-skeleton style="width: 30px" :loading="!isFanCountLoad" animated :count="1">
+                                <template #template>
+                                  <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-items: space-between;
+              margin-left:0px;
+              margin-top: 10px;
+              height: 50px;
+              margin-bottom:10px"
+          >
+            <el-skeleton-item variant="text" style="width: 100%" />
+          </div>
+                                </template>
+                                <template #default>
                             <p style="font-size:22px;">{{ userFanCount }}</p>
+                          </template>
+    </el-skeleton>
                             <p style="font-size:14px; margin-top:-18px; color: #888">粉丝</p>
                           </router-link>
                         </div>
@@ -206,7 +284,25 @@ let cancelFollowUser = async () => {
                         <el-divider direction="vertical" style="height:40px; margin-top:-34px; margin-left:30px" />
 
                         <div style="display:inline-block; margin-left: 20px; text-align: center;">
+                          <el-skeleton style="width: 30px" :loading="!isLikeCountLoad" animated :count="1">
+                                <template #template>
+                                  <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-items: space-between;
+              margin-left:0px;
+              margin-top: 10px;
+              height: 50px;
+              margin-bottom:10px"
+          >
+            <el-skeleton-item variant="text" style="width: 100%" />
+          </div>
+                                </template>
+                                <template #default>
                           <p style="font-size:22px;">{{ userLikeCount }}</p>
+                        </template>
+    </el-skeleton>
                           <p style="font-size:14px; margin-top:-18px; color: #888">喜欢</p>
                         </div>
 
@@ -255,6 +351,25 @@ let cancelFollowUser = async () => {
                     <el-divider style="margin-left:0px; margin-right:0px; margin-top:6px; margin-bottom:10px"/>
                   </div>
 
+                  <el-skeleton style="width: 946px" :loading="!isUserMusicLoad" animated :count="3">
+      <template #template>
+        <div style="padding: 14px">
+          <el-skeleton-item variant="h3" style="margin-left:14px; width: 30%" />
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-items: space-between;
+              margin-left:14px;
+              margin-top: 20px;
+              height: 16px;
+              margin-bottom:10px"
+          >
+            <el-skeleton-item variant="text" style="margin-right: 16px" />
+          </div>
+        </div>
+      </template>
+      <template #default>
                   <p v-if="userMusics.length == 0" style="text-align:center; color:#888">用户还没有投稿过音乐哦</p>
 
                   <el-card class="display_card" v-for="(item, index) in userMusics" :key="index" shadow="hover" style="--el-card-padding:2px; margin-top:6px; margin-left:6px; margin-right:6px; height:65px; border:0px">
@@ -279,6 +394,8 @@ let cancelFollowUser = async () => {
                     </el-row>
                   </router-link>
                 </el-card>
+              </template>
+    </el-skeleton>
 
                 <div style="margin-bottom:40px" />
 
@@ -308,6 +425,25 @@ let cancelFollowUser = async () => {
                     <el-divider style="margin-left:0px; margin-right:0px; margin-top:6px; margin-bottom:10px"/>
                   </div>
 
+                  <el-skeleton style="width: 946px" :loading="!isLikeMusicLoad" animated :count="3">
+      <template #template>
+        <div style="padding: 14px">
+          <el-skeleton-item variant="h3" style="margin-left:14px; width: 30%" />
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-items: space-between;
+              margin-left:14px;
+              margin-top: 20px;
+              height: 16px;
+              margin-bottom:10px"
+          >
+            <el-skeleton-item variant="text" style="margin-right: 16px" />
+          </div>
+        </div>
+      </template>
+      <template #default>
                   <p v-if="likeMusics.length == 0" style="text-align:center; color:#888">用户还没有喜欢过音乐哦</p>
                   
                   <el-card class="display_card" v-for="(item, index) in likeMusics" :key="index" shadow="hover" style="--el-card-padding:2px; margin-top:6px; margin-left:6px; margin-right:6px; height:65px; border:0px">
@@ -332,6 +468,8 @@ let cancelFollowUser = async () => {
                     </el-row>
                   </router-link>
                 </el-card>
+              </template>
+    </el-skeleton>
 
                 <div style="margin-bottom:40px" />
 

@@ -51,10 +51,13 @@ onBeforeUnmount(() => {
 
 const { proxy } = getCurrentInstance()
 
+const musicStatus = ref(-1)
+
 let getMusicStatus = async () => {
   let res = await proxy.$api.getMusicStatus(props.music_id)
   if (res.status == 200) {
-    console.log(res.data)
+    //console.log(res.data)
+    musicStatus.value = res.data
     return res.data
   }
   else
@@ -262,7 +265,7 @@ let cancelLikeMusic = async () => {
 </script>
 
 <template>
-            <el-container style="display: grid; place-items: center;">
+            <el-container v-if="musicStatus == 1" style="display: grid; place-items: center;">
               <el-card class="card" style="width:1080px">
                 <div style="display:flex">
 
