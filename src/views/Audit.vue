@@ -9,13 +9,14 @@ const router = useRouter();
 onMounted(async() =>{
   getRole()
   getPendingMusics()
+  getRefusedMusics()
 })
 
-const musics = ref([]);
+const pending_musics = ref([]);
+const refused_musics = ref([]);
+const refused_reasons = ref([]);
 
 const { proxy } = getCurrentInstance()
-
-const isAdmin = ref(false)
 
 let getRole = async () => {
   let res = await proxy.$api.getRole()
@@ -31,32 +32,69 @@ let getRole = async () => {
 
 let getPendingMusics = async () => {
   let res = await proxy.$api.getPendingMusics()
-  console.log(res)
+  //console.log(res)
   if (res.status == 200) {
-    musics.value = res.data;
-    console.log(musics.value)
+    pending_musics.value = res.data;
+    refused_reasons.value = []
+    //console.log(pending_musics.value)
+  }
+}
+
+let getRefusedMusics = async () => {
+  let res = await proxy.$api.getRefusedMusics()
+  //console.log(res)
+  if (res.status == 200) {
+    refused_musics.value = res.data
+    console.log(refused_musics.value)
   }
 }
 
 const timeFormat = (value) =>
 {
   const [hours, minutes, seconds] = value.split(':');
-  return `${minutes}:${seconds}`;
+  return `${minutes}:${seconds}`
 }
 
 const formatDateTime = (dateTimeString) => {
-  const date = new Date(dateTimeString);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
+  const date = new Date(dateTimeString)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const seconds = String(date.getSeconds()).padStart(2, '0')
 
-  return `${year}年${month}月${day}日 ${hours}:${minutes}:${seconds}`;
+  return `${year}年${month}月${day}日 ${hours}:${minutes}:${seconds}`
 }
 
 const activeTab = ref('pending')
+
+const approveClick = (music_id) => {
+  approveMusic(music_id)
+}
+
+const refuseClick = (music_id, reason) => {
+  refuseMusic(music_id, reason)
+}
+
+let approveMusic = async (music_id) => {
+  let res = await proxy.$api.approveMusic(music_id)
+  //console.log(res)
+  if (res.status == 200) {
+    getPendingMusics()
+    //console.log(res)
+  }
+}
+
+let refuseMusic = async (music_id, reason) => {
+  let res = await proxy.$api.refuseMusic({music_id: music_id, refuse_reason: reason})
+  //console.log(res)
+  if (res.status == 200) {
+    getPendingMusics()
+    getRefusedMusics()
+    //console.log(res)
+  }
+}
 
 </script>
 
@@ -69,8 +107,8 @@ const activeTab = ref('pending')
 
 
               <el-divider style="margin-left:0px; width:930px; margin-top:10px; margin-bottom:0px"/>
-              <p v-if="musics.filter(item => item.status == 0) == 0" style="text-align:center; color:#888; margin-top:30px;">目前没有正在审核中的音乐哦</p>
-                  <div v-for="(item, index) in musics" :key="index">
+              <p v-if="pending_musics.length == 0" style="text-align:center; color:#888; margin-top:30px;">目前没有正在审核中的音乐哦</p>
+                  <div v-for="(item, index) in pending_musics" :key="index">
                     <div v-if="item.status == 0">
       <el-card class="display_card"  shadow="none" style="--el-card-padding:2px; width:1000px;margin-left:20px; margin-right:0px; height:160px; border:0px">
                     
@@ -92,18 +130,16 @@ const activeTab = ref('pending')
                         </el-col>
 
 
-                        <el-button  style="margin-top:100px; margin-left:376px; width:80px; --el-color-primary:green" plain>通过</el-button>
-                        <el-popconfirm
-                          confirm-button-text="确认"
-                          cancel-button-text="取消"
-                          title="确定要永久性删除稿件吗？"
+                        <el-button @click="approveClick(item.musicId)" style="margin-top:100px; margin-left:376px; width:80px; --el-color-primary:green" plain>通过</el-button>
+                        <el-popover
                           width="220px"
-                          @confirm="confirmDelete(item.musicId)"
                         >
                           <template #reference>
-                            <el-button  style="width:80px; margin-top:100px; margin-left:20px; --el-color-primary:red" plain>拒绝</el-button>
+                            <el-button style="width:80px; margin-top:100px; margin-left:20px; --el-color-primary:red" plain>拒绝</el-button>
                           </template>
-                        </el-popconfirm>
+                          <el-input v-model="refused_reasons[index]" style="width: 194px; margin-top:10px; --el-color-primary:#FFA500;" placeholder="请输入拒绝理由" clearable/>
+                          <el-button @click="refuseClick(item.musicId, refused_reasons[index])" style="width:60px; height:30px; margin-top:10px; margin-left:134px; margin-bottom:5px; font-size:12px; --el-color-primary:#FFA500" plain>提交</el-button>
+                        </el-popover>
                     </el-row>
                   
                 </el-card>
@@ -119,9 +155,9 @@ const activeTab = ref('pending')
 
 
                 <el-divider style="margin-left:0px; width:930px; margin-top:10px; margin-bottom:0px"/>
-              <p v-if="musics.filter(item => item.status == 1) == 0" style="text-align:center; color:#888; margin-top:30px;">目前没有已拒绝的音乐哦</p>
-                  <div v-for="(item, index) in musics" :key="index">
-                    <div v-if="item.status == 1">
+              <p v-if="refused_musics.length == 0" style="text-align:center; color:#888; margin-top:30px;">目前没有已拒绝的音乐哦</p>
+                  <div v-for="(item, index) in refused_musics" :key="index">
+                    <div v-if="item.status == 0">
       <el-card class="display_card"  shadow="none" style="--el-card-padding:2px; width:1000px;margin-left:20px; margin-right:0px; height:160px; border:0px">
                     
                       <el-row >
@@ -134,17 +170,15 @@ const activeTab = ref('pending')
                           </router-link>
                           <p style="margin-left: 0px; font-size: 14px; margin-top:-10px; color: #888">{{ item.album }}</p>
                           <p style="margin-left: 0px; font-size: 14px; margin-top:-10px; color: #888">{{ item.users[0].nickname }}</p>
-                          <p style="margin-left: 0px; font-size: 14px; margin-top:-10px;margin-bottom:10px; color: #888; white-space: nowrap">{{ formatDateTime(item.createdTime) }}</p>
-                          <el-icon color="#888" style="font-size: 14px; margin-top:0px"><Headset /></el-icon>
-                          <span style="margin-left: 3px; font-size: 14px; margin-top:0px; color: #888">{{ item.view }}</span>
-                          <p style="position: relative;z-index:10; margin-left:-78px; margin-top:-24px;">
+                          <p style="margin-left: 0px; font-size: 14px; margin-top:34px;margin-bottom:10px; color: #888; white-space: nowrap">{{ formatDateTime(item.createdTime) }}</p>
+                          <p style="position: relative;z-index:10; margin-left:-77px; margin-top:-32px;">
                             <span style="background:black; margin-left: 0px; font-size: 12px; margin-top:0px; color: white">{{ timeFormat(item.length) }}</span>
                           </p>
                           
                         </el-col>
 
-                          <el-button  style="width:80px; margin-top:100px; margin-left:376px; --el-color-primary:#FFA500" plain>编辑</el-button>
-                          <el-button  style="width:80px; margin-top:100px; margin-left:20px; --el-color-primary:#FFA500" plain>删除</el-button>
+                        <p style="margin-top:100px; margin-left:320px; width:80px; color:red; font-size:14px" plain>原因：{{ item.musicRefusedReasons[0].reason }}</p>
+                        
                     </el-row>
                   
                 </el-card>
@@ -153,7 +187,6 @@ const activeTab = ref('pending')
             </div>
 
               <div style="margin-bottom:40px" />
-
 
               </el-tab-pane>
       </el-tabs>

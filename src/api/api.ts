@@ -279,4 +279,26 @@ export default {
             mock: false
         })
     },
+    getRefusedMusics(params) {
+        return request({
+            url: '/Music/GetRefusedMusics',
+            method: 'get',
+            mock: false
+        })
+    },
+    approveMusic(params) {
+        return request({
+            url: '/Music/ApproveMusic/' + params,
+            method: 'put',
+            mock: false
+        })
+    },
+    refuseMusic(params) {
+        return request({
+            url: '/Music/RefuseMusic',
+            params: params,
+            method: 'put',
+            mock: false
+        })
+    },
 }
