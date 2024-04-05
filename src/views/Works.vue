@@ -9,32 +9,35 @@ onMounted(() =>{
 
 const musics = ref([]);
 
+const isMusicsLoad = ref(false)
+
 const { proxy } = getCurrentInstance()
 
 let getSelfMusics = async () => {
   let res = await proxy.$api.getSelfMusics()
   if (res.status == 200) {
-    musics.value = res.data;
+    musics.value = res.data
+    isMusicsLoad.value = true
     //console.log(musics.value)
   }
 }
 
 const timeFormat = (value) =>
 {
-  const [hours, minutes, seconds] = value.split(':');
-  return `${minutes}:${seconds}`;
+  const [hours, minutes, seconds] = value.split(':')
+  return `${minutes}:${seconds}`
 }
 
 const formatDateTime = (dateTimeString) => {
-  const date = new Date(dateTimeString);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
+  const date = new Date(dateTimeString)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const seconds = String(date.getSeconds()).padStart(2, '0')
 
-  return `${year}年${month}月${day}日 ${hours}:${minutes}:${seconds}`;
+  return `${year}年${month}月${day}日 ${hours}:${minutes}:${seconds}`
 }
 
 const activeTab = ref('all')
@@ -64,7 +67,27 @@ let deleteMusic = async (music_id) => {
 
 
             <el-divider style="margin-left:0px; width:930px; margin-top:10px; margin-bottom:0px"/>
-            <p v-if="musics.length == 0" style="text-align:center; color:#888; margin-top:30px;">目前没有投稿的音乐哦</p>
+
+    <el-skeleton style="width: 946px; margin-top:20px" :loading="!isMusicsLoad" :throttle="500" animated :count="3">
+      <template #template>
+        <div style="padding: 20px; margin-left: -20px">
+          <el-skeleton-item variant="h3" style="margin-left:14px; width: 30%" />
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-items: space-between;
+              margin-left:14px;
+              margin-top: 20px;
+              height: 16px;
+              margin-bottom:10px"
+          >
+            <el-skeleton-item variant="text" style="margin-right: 16px" />
+          </div>
+        </div>
+      </template>
+      <template #default>
+            <p v-if="musics.length == 0 && isMusicsLoad" style="text-align:center; color:#888; margin-top:30px;">目前没有投稿的音乐哦</p>
                   <div v-for="(item, index) in musics" :key="index">
       <el-card class="display_card"  shadow="none" style="--el-card-padding:2px; width:1000px;margin-left:20px; margin-right:0px; height:160px; border:0px">
                     
@@ -112,6 +135,8 @@ let deleteMusic = async (music_id) => {
                 </el-card>
                 <el-divider style="margin-left:20px; width:890px; margin-top:0px; margin-bottom:0px"/>
               </div>
+      </template>
+    </el-skeleton>
 
               <div style="margin-bottom:40px" />
 
@@ -121,7 +146,27 @@ let deleteMusic = async (music_id) => {
 
 
               <el-divider style="margin-left:0px; width:930px; margin-top:10px; margin-bottom:0px"/>
-              <p v-if="musics.filter(item => item.status == 0) == 0" style="text-align:center; color:#888; margin-top:30px;">目前没有正在审核中的音乐哦</p>
+
+    <el-skeleton style="width: 946px; margin-top:20px" :loading="!isMusicsLoad" :throttle="500" animated :count="3">
+      <template #template>
+        <div style="padding: 20px; margin-left: -20px">
+          <el-skeleton-item variant="h3" style="margin-left:14px; width: 30%" />
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-items: space-between;
+              margin-left:14px;
+              margin-top: 20px;
+              height: 16px;
+              margin-bottom:10px"
+          >
+            <el-skeleton-item variant="text" style="margin-right: 16px" />
+          </div>
+        </div>
+      </template>
+      <template #default>
+              <p v-if="musics.filter(item => item.status == 0) == 0 && isMusicsLoad" style="text-align:center; color:#888; margin-top:30px;">目前没有正在审核中的音乐哦</p>
                   <div v-for="(item, index) in musics" :key="index">
                     <div v-if="item.status == 0">
       <el-card class="display_card"  shadow="none" style="--el-card-padding:2px; width:1000px;margin-left:20px; margin-right:0px; height:160px; border:0px">
@@ -168,6 +213,8 @@ let deleteMusic = async (music_id) => {
                 <el-divider style="margin-left:20px; width:890px; margin-top:0px; margin-bottom:0px"/>
               </div>
             </div>
+      </template>
+    </el-skeleton>
 
               <div style="margin-bottom:40px" />
 
@@ -177,7 +224,27 @@ let deleteMusic = async (music_id) => {
 
 
                 <el-divider style="margin-left:0px; width:930px; margin-top:10px; margin-bottom:0px"/>
-              <p v-if="musics.filter(item => item.status == 1) == 0" style="text-align:center; color:#888; margin-top:30px;">目前没有已通过的音乐哦</p>
+
+    <el-skeleton style="width: 946px; margin-top:20px" :loading="!isMusicsLoad" :throttle="500" animated :count="3">
+      <template #template>
+        <div style="padding: 20px; margin-left: -20px">
+          <el-skeleton-item variant="h3" style="margin-left:14px; width: 30%" />
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-items: space-between;
+              margin-left:14px;
+              margin-top: 20px;
+              height: 16px;
+              margin-bottom:10px"
+          >
+            <el-skeleton-item variant="text" style="margin-right: 16px" />
+          </div>
+        </div>
+      </template>
+      <template #default>
+              <p v-if="musics.filter(item => item.status == 1) == 0 && isMusicsLoad" style="text-align:center; color:#888; margin-top:30px;">目前没有已通过的音乐哦</p>
                   <div v-for="(item, index) in musics" :key="index">
                     <div v-if="item.status == 1">
       <el-card class="display_card"  shadow="none" style="--el-card-padding:2px; width:1000px;margin-left:20px; margin-right:0px; height:160px; border:0px">
@@ -221,6 +288,8 @@ let deleteMusic = async (music_id) => {
                 <el-divider style="margin-left:20px; width:890px; margin-top:0px; margin-bottom:0px"/>
               </div>
             </div>
+      </template>
+    </el-skeleton>
 
               <div style="margin-bottom:40px" />
 
@@ -230,7 +299,27 @@ let deleteMusic = async (music_id) => {
 
 
                   <el-divider style="margin-left:0px; width:930px; margin-top:10px; margin-bottom:0px"/>
-              <p v-if="musics.filter(item => item.status == 2) == 0" style="text-align:center; color:#888; margin-top:30px;">目前没有未通过的音乐哦</p>
+
+    <el-skeleton style="width: 946px; margin-top:20px" :loading="!isMusicsLoad" :throttle="500" animated :count="3">
+      <template #template>
+        <div style="padding: 20px; margin-left: -20px">
+          <el-skeleton-item variant="h3" style="margin-left:14px; width: 30%" />
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-items: space-between;
+              margin-left:14px;
+              margin-top: 20px;
+              height: 16px;
+              margin-bottom:10px"
+          >
+            <el-skeleton-item variant="text" style="margin-right: 16px" />
+          </div>
+        </div>
+      </template>
+      <template #default>
+              <p v-if="musics.filter(item => item.status == 2) == 0 && isMusicsLoad" style="text-align:center; color:#888; margin-top:30px;">目前没有未通过的音乐哦</p>
                   <div v-for="(item, index) in musics" :key="index">
                     <div v-if="item.status == 2">
       <el-card class="display_card"  shadow="none" style="--el-card-padding:2px; width:1000px;margin-left:20px; margin-right:0px; height:160px; border:0px">
@@ -277,6 +366,8 @@ let deleteMusic = async (music_id) => {
                 <el-divider style="margin-left:20px; width:890px; margin-top:0px; margin-bottom:0px"/>
               </div>
             </div>
+      </template>
+    </el-skeleton>
 
               <div style="margin-bottom:40px" />
 

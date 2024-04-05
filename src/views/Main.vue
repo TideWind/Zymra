@@ -19,13 +19,13 @@ import Footer from '../components/Footer.vue'
                       <Transition name="fade">
                         <component :is="Component"></component>
                       </Transition>
-                      <template #fallback>
+                      <!-- <template #fallback>
                         <div style="display: grid; place-items: center;">
                           <el-card class="container_justify" style="width:1080px; height: 1000px">
                             <el-skeleton style="margin-top: 80px;" :rows="6" animated />
                           </el-card>
                         </div>
-                      </template>
+                      </template> -->
                     </suspense>
                   <!-- </KeepAlive> -->
 

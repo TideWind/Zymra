@@ -20,6 +20,8 @@ const nickname = ref('')
 const follows = ref([])
 const btnText = ref([])
 
+const isFollowsLoad = ref(false)
+
 const { proxy } = getCurrentInstance()
 
 let getUserInfo = async () => {
@@ -33,6 +35,7 @@ let getFans = async () => {
   let res = await proxy.$api.getFans(props.username)
   if (res.status == 200) {
     follows.value = res.data
+    isFollowsLoad.value = true
   }
 }
 
@@ -88,7 +91,27 @@ let cancelFollowUser = async (username, clickedButton) => {
 
       <p style="font-size:18px; margin-left:20px"><router-link :to="'/user/' + username">{{ nickname }}</router-link>的粉丝</p>    
             <el-divider style="margin-left:20px; width:980px; margin-top:10px; margin-bottom:0px"/>
-            <p v-if="follows.length == 0" style="text-align:center; color:#888; margin-top:30px;">目前没有粉丝哦</p>
+
+    <el-skeleton style="width: 946px; margin-top:20px" :loading="!isFollowsLoad" :throttle="500" animated :count="3">
+      <template #template>
+        <div style="padding: 14px">
+          <el-skeleton-item variant="h3" style="margin-left:14px; width: 30%" />
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-items: space-between;
+              margin-left:14px;
+              margin-top: 20px;
+              height: 16px;
+              margin-bottom:10px"
+          >
+            <el-skeleton-item variant="text" style="margin-right: 16px" />
+          </div>
+        </div>
+      </template>
+      <template #default>
+            <p v-if="follows.length == 0 && isFollowsLoad" style="text-align:center; color:#888; margin-top:30px;">目前没有粉丝哦</p>
                   <div v-for="(item, index) in follows" :key="index">
       <el-card class="display_card"  shadow="none" style="--el-card-padding:2px; width:1000px;margin-left:20px; margin-right:0px; height:100px; border:0px">
                     
@@ -111,6 +134,8 @@ let cancelFollowUser = async (username, clickedButton) => {
                 </el-card>
                 <el-divider style="margin-left:20px; width:980px; margin-top:0px; margin-bottom:0px"/>
               </div>
+      </template>
+    </el-skeleton>
 
               <div style="margin-bottom:40px" />
 

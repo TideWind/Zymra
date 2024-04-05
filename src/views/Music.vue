@@ -52,6 +52,7 @@ onBeforeUnmount(() => {
 const { proxy } = getCurrentInstance()
 
 const musicStatus = ref(-1)
+const isAdmin = ref(false)
 
 let getMusicStatus = async () => {
   let res = await proxy.$api.getMusicStatus(props.music_id)
@@ -71,7 +72,10 @@ let getRole = async () => {
   if (res.status == 200) {
     //console.log(res.data)
     if(res.data.includes('admin'))
+    {
+      isAdmin.value = true
       return true
+    }
     else
       return false
   }
@@ -265,7 +269,7 @@ let cancelLikeMusic = async () => {
 </script>
 
 <template>
-            <el-container v-if="musicStatus == 1" style="display: grid; place-items: center;">
+            <el-container v-if="musicStatus == 1 || isAdmin" style="display: grid; place-items: center;">
               <el-card class="card" style="width:1080px">
                 <div style="display:flex">
 

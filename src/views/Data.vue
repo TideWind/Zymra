@@ -12,12 +12,15 @@ onMounted(() =>{
 
 const data = ref([]);
 
+const isDataLoad = ref(false)
+
 const { proxy } = getCurrentInstance()
 
 let getSelfData = async () => {
   let res = await proxy.$api.getSelfData()
   if (res.status == 200) {
-    data.value = res.data;
+    data.value = res.data
+    isDataLoad.value = true
     //console.log(data.value)
   }
 }
@@ -31,6 +34,34 @@ let getSelfData = async () => {
       <el-row :gutter="16" style="margin-top:100px; margin-bottom:100px">
     <el-col :span="8">
       <div class="statistic-card">
+        <el-skeleton style="width: 100px" :loading="!isDataLoad" animated :count="1">
+          <template #template>
+            <div style="display: inline-flex; align-items: center;font-size: 12px; color:#606266">
+              累计播放量
+              <el-tooltip
+                effect="dark"
+                content="累计播放量，增长量是相对于前一天的增量"
+                placement="top"
+              >
+                <el-icon style="margin-left: 4px" :size="12">
+                  <Warning />
+                </el-icon>
+              </el-tooltip>
+            </div>
+            <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-items: space-between;
+              margin-left:0px;
+              margin-top: 0px;
+              height: 50px;
+              margin-bottom:10px"
+            >
+              <el-skeleton-item variant="text" style="width: 98px" />
+            </div>
+          </template>
+        <template #default>
         <el-statistic :value="data.totalViews" style="width:200px">
           <template #title>
             <div style="display: inline-flex; align-items: center">
@@ -67,10 +98,32 @@ let getSelfData = async () => {
 
           </div>
         </div>
+      </template>
+    </el-skeleton>
       </div>
     </el-col>
     <el-col :span="8">
       <div class="statistic-card">
+
+        <el-skeleton style="width: 100px" :loading="!isDataLoad" animated :count="1">
+          <template #template>
+            <div style="display: inline-flex; align-items: center;font-size: 12px; color:#606266">
+              粉丝数
+            </div>
+            <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-items: space-between;
+              margin-left:0px;
+              margin-top: 0px;
+              height: 50px;
+              margin-bottom:10px"
+            >
+              <el-skeleton-item variant="text" style="width: 98px" />
+            </div>
+          </template>
+        <template #default>
         <el-statistic :value="data.totalFans">
           <template #title>
             <div style="display: inline-flex; align-items: center">
@@ -78,10 +131,33 @@ let getSelfData = async () => {
             </div>
           </template>
         </el-statistic>
+      </template>
+    </el-skeleton>
+
       </div>
     </el-col>
     <el-col :span="8">
       <div class="statistic-card">
+
+        <el-skeleton style="width: 100px" :loading="!isDataLoad" animated :count="1">
+          <template #template>
+            <div style="display: inline-flex; align-items: center;font-size: 12px; color:#606266">
+              累计喜欢数
+            </div>
+            <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-items: space-between;
+              margin-left:0px;
+              margin-top: 0px;
+              height: 50px;
+              margin-bottom:10px"
+            >
+              <el-skeleton-item variant="text" style="width: 98px" />
+            </div>
+          </template>
+        <template #default>
         <el-statistic :value="data.totalLikes">
           <template #title>
             <div style="display: inline-flex; align-items: center">
@@ -89,6 +165,8 @@ let getSelfData = async () => {
             </div>
           </template>
         </el-statistic>
+      </template>
+    </el-skeleton>
       </div>
     </el-col>
   </el-row>

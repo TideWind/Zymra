@@ -136,6 +136,13 @@ export default {
             mock: false
         })
     },
+    cancelLikeMusic(params) {
+        return request({
+            url: '/Music/CancelLike/' + params,
+            method: 'delete',
+            mock: false
+        })
+    },
     getLikeMusics(params) {
         return request({
             url: '/Music/GetLikeMusics/' + params,

@@ -7,6 +7,10 @@ onMounted(() =>{
   getWeekPopularMusics()
 })
 
+const isYearMusicsLoad = ref(false)
+const isMonthMusicsLoad = ref(false)
+const isWeekMusicsLoad = ref(false)
+
 const yearMusics = ref([]);
 const monthMusics = ref([]);
 const weekMusics = ref([]);
@@ -16,14 +20,16 @@ const { proxy } = getCurrentInstance()
 let getYearPopularMusics = async () => {
   let res = await proxy.$api.getYearPopularMusics(20)
   if (res.status == 200) {
-    yearMusics.value = res.data;
+    yearMusics.value = res.data
+    isYearMusicsLoad.value = true
   }
 }
 
 let getMonthPopularMusics = async () => {
   let res = await proxy.$api.getMonthPopularMusics(20)
   if (res.status == 200) {
-    monthMusics.value = res.data;
+    monthMusics.value = res.data
+    isMonthMusicsLoad.value = true
   }
 }
 
@@ -31,6 +37,7 @@ let getWeekPopularMusics = async () => {
   let res = await proxy.$api.getWeekPopularMusics(20)
   if (res.status == 200) {
     weekMusics.value = res.data;
+    isWeekMusicsLoad.value = true
   }
 }
 
@@ -75,7 +82,26 @@ const activeTab = ref('year')
                     <el-divider style="margin-left:0px; margin-right:0px; margin-top:6px; margin-bottom:10px"/>
                   </div>
 
-                  <p v-if="yearMusics.length == 0" style="text-align:center; color:#888">还没有上榜的音乐哦</p>
+    <el-skeleton style="width: 946px" :loading="!isYearMusicsLoad" :throttle="500" animated :count="3">
+      <template #template>
+        <div style="padding: 14px">
+          <el-skeleton-item variant="h3" style="margin-left:14px; width: 30%" />
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-items: space-between;
+              margin-left:14px;
+              margin-top: 20px;
+              height: 16px;
+              margin-bottom:10px"
+          >
+            <el-skeleton-item variant="text" style="margin-right: 16px" />
+          </div>
+        </div>
+      </template>
+      <template #default>
+                  <p v-if="yearMusics.length == 0 && isYearMusicsLoad" style="text-align:center; color:#888">还没有上榜的音乐哦</p>
 
                   <el-card class="display_card" v-for="(item, index) in yearMusics" :key="index" shadow="hover" style="--el-card-padding:2px; margin-top:6px; margin-left:6px; margin-right:6px; height:65px; border:0px">
                     <router-link :to="'/music/' + item.musicId">
@@ -102,6 +128,8 @@ const activeTab = ref('year')
                     </el-row>
                   </router-link>
                 </el-card>
+      </template>
+    </el-skeleton>
 
                 <div style="margin-bottom:40px" />
 
@@ -134,7 +162,26 @@ const activeTab = ref('year')
                     <el-divider style="margin-left:0px; margin-right:0px; margin-top:6px; margin-bottom:10px"/>
                   </div>
 
-                  <p v-if="monthMusics.length == 0" style="text-align:center; color:#888">还没有上榜的音乐哦</p>
+    <el-skeleton style="width: 946px" :loading="!isMonthMusicsLoad" :throttle="500" animated :count="3">
+      <template #template>
+        <div style="padding: 14px">
+          <el-skeleton-item variant="h3" style="margin-left:14px; width: 30%" />
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-items: space-between;
+              margin-left:14px;
+              margin-top: 20px;
+              height: 16px;
+              margin-bottom:10px"
+          >
+            <el-skeleton-item variant="text" style="margin-right: 16px" />
+          </div>
+        </div>
+      </template>
+      <template #default>
+                  <p v-if="monthMusics.length == 0 && isMonthMusicsLoad" style="text-align:center; color:#888">还没有上榜的音乐哦</p>
 
                   <el-card class="display_card" v-for="(item, index) in monthMusics" :key="index" shadow="hover" style="--el-card-padding:2px; margin-top:6px; margin-left:6px; margin-right:6px; height:65px; border:0px">
                     <router-link :to="'/music/' + item.musicId">
@@ -161,6 +208,8 @@ const activeTab = ref('year')
                     </el-row>
                   </router-link>
                 </el-card>
+      </template>
+    </el-skeleton>
 
                 <div style="margin-bottom:40px" />
 
@@ -193,7 +242,26 @@ const activeTab = ref('year')
                     <el-divider style="margin-left:0px; margin-right:0px; margin-top:6px; margin-bottom:10px"/>
                   </div>
 
-                  <p v-if="weekMusics.length == 0" style="text-align:center; color:#888">还没有上榜的音乐哦</p>
+    <el-skeleton style="width: 946px" :loading="!isWeekMusicsLoad" :throttle="500" animated :count="3">
+      <template #template>
+        <div style="padding: 14px">
+          <el-skeleton-item variant="h3" style="margin-left:14px; width: 30%" />
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-items: space-between;
+              margin-left:14px;
+              margin-top: 20px;
+              height: 16px;
+              margin-bottom:10px"
+          >
+            <el-skeleton-item variant="text" style="margin-right: 16px" />
+          </div>
+        </div>
+      </template>
+      <template #default>
+                  <p v-if="weekMusics.length == 0 && isWeekMusicsLoad" style="text-align:center; color:#888">还没有上榜的音乐哦</p>
 
                   <el-card class="display_card" v-for="(item, index) in weekMusics" :key="index" shadow="hover" style="--el-card-padding:2px; margin-top:6px; margin-left:6px; margin-right:6px; height:65px; border:0px">
                     <router-link :to="'/music/' + item.musicId">
@@ -220,6 +288,8 @@ const activeTab = ref('year')
                     </el-row>
                   </router-link>
                 </el-card>
+      </template>
+    </el-skeleton>
 
                 <div style="margin-bottom:40px" />
 

@@ -7,19 +7,22 @@ onMounted(() =>{
 
 const musics = ref([]);
 
+const isMusicsLoad = ref(false)
+
 const { proxy } = getCurrentInstance()
 
 let getRecommendMusics = async () => {
   let res = await proxy.$api.getRecommendMusics(32)
   if (res.status == 200) {
-    musics.value = res.data;
+    musics.value = res.data
+    isMusicsLoad.value = true
   }
 }
 
 const timeFormat = (value) =>
 {
-  const [hours, minutes, seconds] = value.split(':');
-  return `${minutes}:${seconds}`;
+  const [hours, minutes, seconds] = value.split(':')
+  return `${minutes}:${seconds}`
 }
 
 </script>
@@ -52,7 +55,26 @@ const timeFormat = (value) =>
                     <el-divider style="margin-left:0px; margin-right:0px; margin-top:6px; margin-bottom:10px"/>
                   </div>
 
-                  <p v-if="musics.length == 0" style="text-align:center; color:#888">还没有推荐的音乐哦</p>
+    <el-skeleton style="width: 946px" :loading="!isMusicsLoad" :throttle="500" animated :count="3">
+      <template #template>
+        <div style="padding: 14px">
+          <el-skeleton-item variant="h3" style="margin-left:14px; width: 30%" />
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-items: space-between;
+              margin-left:14px;
+              margin-top: 20px;
+              height: 16px;
+              margin-bottom:10px"
+          >
+            <el-skeleton-item variant="text" style="margin-right: 16px" />
+          </div>
+        </div>
+      </template>
+      <template #default>
+                  <p v-if="musics.length == 0 && isMusicsLoad" style="text-align:center; color:#888">还没有推荐的音乐哦</p>
 
                   <el-card class="display_card" v-for="(item, index) in musics" :key="index" shadow="hover" style="--el-card-padding:2px; margin-top:6px; margin-left:6px; margin-right:6px; height:65px; border:0px">
                     <router-link :to="'/music/' + item.musicId">
@@ -76,6 +98,8 @@ const timeFormat = (value) =>
                     </el-row>
                   </router-link>
                 </el-card>
+      </template>
+    </el-skeleton>
 
                 <div style="margin-bottom:40px" />
 

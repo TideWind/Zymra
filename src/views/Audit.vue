@@ -16,6 +16,9 @@ const pending_musics = ref([]);
 const refused_musics = ref([]);
 const refused_reasons = ref([]);
 
+const isPendingMusicsLoad = ref(false)
+const isRefusedMusicsLoad = ref(false)
+
 const { proxy } = getCurrentInstance()
 
 let getRole = async () => {
@@ -36,6 +39,7 @@ let getPendingMusics = async () => {
   if (res.status == 200) {
     pending_musics.value = res.data;
     refused_reasons.value = []
+    isPendingMusicsLoad.value = true
     //console.log(pending_musics.value)
   }
 }
@@ -45,6 +49,7 @@ let getRefusedMusics = async () => {
   //console.log(res)
   if (res.status == 200) {
     refused_musics.value = res.data
+    isRefusedMusicsLoad.value = true
     //console.log(refused_musics.value)
   }
 }
@@ -107,7 +112,27 @@ let refuseMusic = async (music_id, reason) => {
 
 
               <el-divider style="margin-left:0px; width:930px; margin-top:10px; margin-bottom:0px"/>
-              <p v-if="pending_musics.length == 0" style="text-align:center; color:#888; margin-top:30px;">目前没有正在审核中的音乐哦</p>
+
+    <el-skeleton style="width: 946px; margin-top:20px" :loading="!isPendingMusicsLoad" :throttle="500" animated :count="3">
+      <template #template>
+        <div style="padding: 20px; margin-left: -20px">
+          <el-skeleton-item variant="h3" style="margin-left:14px; width: 30%" />
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-items: space-between;
+              margin-left:14px;
+              margin-top: 20px;
+              height: 16px;
+              margin-bottom:10px"
+          >
+            <el-skeleton-item variant="text" style="margin-right: 16px" />
+          </div>
+        </div>
+      </template>
+      <template #default>
+              <p v-if="pending_musics.length == 0 && isPendingMusicsLoad" style="text-align:center; color:#888; margin-top:30px;">目前没有正在审核中的音乐哦</p>
                   <div v-for="(item, index) in pending_musics" :key="index">
                     <div v-if="item.status == 0">
       <el-card class="display_card"  shadow="none" style="--el-card-padding:2px; width:1000px;margin-left:20px; margin-right:0px; height:160px; border:0px">
@@ -146,6 +171,8 @@ let refuseMusic = async (music_id, reason) => {
                 <el-divider style="margin-left:20px; width:890px; margin-top:0px; margin-bottom:0px"/>
               </div>
             </div>
+      </template>
+    </el-skeleton>
 
               <div style="margin-bottom:40px" />
 
@@ -155,7 +182,27 @@ let refuseMusic = async (music_id, reason) => {
 
 
                 <el-divider style="margin-left:0px; width:930px; margin-top:10px; margin-bottom:0px"/>
-              <p v-if="refused_musics.length == 0" style="text-align:center; color:#888; margin-top:30px;">目前没有已拒绝的音乐哦</p>
+
+    <el-skeleton style="width: 946px; margin-top:20px" :loading="!isRefusedMusicsLoad" :throttle="500" animated :count="3">
+      <template #template>
+        <div style="padding: 20px; margin-left: -20px">
+          <el-skeleton-item variant="h3" style="margin-left:14px; width: 30%" />
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-items: space-between;
+              margin-left:14px;
+              margin-top: 20px;
+              height: 16px;
+              margin-bottom:10px"
+          >
+            <el-skeleton-item variant="text" style="margin-right: 16px" />
+          </div>
+        </div>
+      </template>
+      <template #default>
+              <p v-if="refused_musics.length == 0 && isRefusedMusicsLoad" style="text-align:center; color:#888; margin-top:30px;">目前没有已拒绝的音乐哦</p>
                   <div v-for="(item, index) in refused_musics" :key="index">
                     <div v-if="item.status == 0">
       <el-card class="display_card"  shadow="none" style="--el-card-padding:2px; width:1000px;margin-left:20px; margin-right:0px; height:160px; border:0px">
@@ -185,6 +232,8 @@ let refuseMusic = async (music_id, reason) => {
                 <el-divider style="margin-left:20px; width:890px; margin-top:0px; margin-bottom:0px"/>
               </div>
             </div>
+      </template>
+    </el-skeleton>
 
               <div style="margin-bottom:40px" />
 

@@ -9,6 +9,10 @@ onMounted(() =>{
   getTypeView()
 })
 
+const isRecommendMusicsLoad = ref(false)
+const isPopularMusicsLoad = ref(false)
+const isNewMusicsLoad = ref(false)
+
 const banner_images = ref([
   "/banner/1.png",
   "/banner/2.png",
@@ -137,6 +141,7 @@ let getRecommendMusics = async () => {
   let res = await proxy.$api.getRecommendMusics(8)
   if (res.status == 200) {
     display_rec.value = res.data;
+    isRecommendMusicsLoad.value = true
     //console.log(res.data)
   }
 }
@@ -145,6 +150,7 @@ let getPopularMusics = async () => {
   let res = await proxy.$api.getYearPopularMusics(9)
   if (res.status == 200) {
     display_chart.value = res.data;
+    isPopularMusicsLoad.value = true
     //console.log(res.data)
   }
 }
@@ -153,6 +159,7 @@ let getNewMusics = async () => {
   let res = await proxy.$api.getNewMusics(8)
   if (res.status == 200) {
     display_new.value = res.data;
+    isNewMusicsLoad.value = true
     //console.log(res.data)
   }
 }
@@ -197,19 +204,53 @@ let getTypeView = async () => {
                   </router-link>
                 </div>
                 <el-divider />
+
+                <el-skeleton style="width: 780px" :loading="!isRecommendMusicsLoad" animated :count="1">
+                      <template #template>
+                        <div style="margin-left:20px">
+                          <el-row class="container_justify" :gutter="0" v-for="(row, index) in [1, 2]">
+                          <el-col :span="6" style="text-align: center; margin-bottom:10px;" v-for="(item, columnIndex) in [1, 2, 3, 4]">
+                          <el-skeleton-item variant="image" style="width: 150px; height: 150px;" />
+                          <div
+                            style="
+                            display: flex;
+                            align-items: center;
+                            justify-items: space-between;
+                            margin-left:0px;
+                            margin-top: 14px;
+                            height: 16px;
+                            margin-bottom:16px"
+                          >
+                            <el-skeleton-item variant="text" style="width:150px" />
+                          </div>
+                        </el-col>
+                      </el-row>
+                        </div>
+                      </template>
+                      <template #default>
                 <el-row class="container_justify" :gutter="0" v-for="(row, index) in explore_rows" :key="index">
                   <el-col :span="6" style="text-align: center; margin-bottom:10px;" v-for="(item, columnIndex) in row" :key="columnIndex">
-                    <router-link :to="'/music/' + item.musicId">
-                      <el-image
-                        class="display_card"
-                        :src="'/api/Music/Cover/' + item.musicId"
-                        style="width:150px; height: 150px"
-                        fit="cover"
-                      />
-                      <p style="margin-top: 8px; font-size: 14px;">{{item.name}}</p>
-                    </router-link>
+
+                        <router-link :to="'/music/' + item.musicId">
+                          <el-image
+                            class="display_card"
+                            :src="'/api/Music/Cover/' + item.musicId"
+                            style="width:150px; height: 150px"
+                            fit="cover">
+                            <template #placeholder>
+                              <el-skeleton style="width: 150px" animated :count="1">
+                                <template #template>
+                                  <el-skeleton-item variant="image" style="width: 150px; height: 150px" />
+                                </template>
+                              </el-skeleton>
+                            </template>
+                          </el-image>
+                          <p style="margin-top: 8px; font-size: 14px;">{{item.name}}</p>
+                        </router-link>
                   </el-col>
                 </el-row>
+              </template>
+                    </el-skeleton>
 
                 <div class="container_align" style="margin-top:16px;">
                   <img src="../assets/images/icon/music_point.svg" style="width:4%" alt="" />
@@ -274,6 +315,30 @@ let getTypeView = async () => {
                   </router-link>
                 </div>
                 <el-divider/>
+
+                <el-skeleton style="width: 780px" :loading="!isNewMusicsLoad" animated :count="1">
+                      <template #template>
+                        <div style="margin-left:20px">
+                          <el-row class="container_justify" :gutter="0" v-for="(row, index) in [1, 2]">
+                          <el-col :span="6" style="text-align: center; margin-bottom:10px;" v-for="(item, columnIndex) in [1, 2, 3, 4]">
+                          <el-skeleton-item variant="image" style="width: 150px; height: 150px;" />
+                          <div
+                            style="
+                            display: flex;
+                            align-items: center;
+                            justify-items: space-between;
+                            margin-left:0px;
+                            margin-top: 14px;
+                            height: 16px;
+                            margin-bottom:16px"
+                          >
+                            <el-skeleton-item variant="text" style="width:150px" />
+                          </div>
+                        </el-col>
+                      </el-row>
+                        </div>
+                      </template>
+                      <template #default>
                 <el-row class="container_justify" :gutter="0" v-for="(row, index) in new_rows" :key="index">
                   <el-col :span="6" style="text-align: center; margin-bottom:10px;" v-for="(item, columnIndex) in row" :key="columnIndex">
                     <router-link :to="'/music/' + item.musicId">
@@ -281,12 +346,21 @@ let getTypeView = async () => {
                         class="display_card"
                         :src="'/api/Music/Cover/' + item.musicId"
                         style="width:150px; height: 150px"
-                        fit="cover"
-                      />
+                        fit="cover">
+                        <template #placeholder>
+                              <el-skeleton style="width: 150px" animated :count="1">
+                                <template #template>
+                                  <el-skeleton-item variant="image" style="width: 150px; height: 150px" />
+                                </template>
+                              </el-skeleton>
+                            </template>
+                          </el-image>
                       <p style="margin-top: 8px; font-size: 14px;">{{item.name}}</p>
                     </router-link>
                   </el-col>
                 </el-row>
+              </template>
+                    </el-skeleton>
 
                 
 
@@ -300,20 +374,50 @@ let getTypeView = async () => {
                   <span style="font-weight: bold; margin-left:5px">热门榜单</span>
                 </div>
                 <el-divider />
+
+                <el-skeleton style="width: 280px" :loading="!isPopularMusicsLoad" animated :count="9">
+                      <template #template>
+                        <div style="margin-left:22px">
+                          <el-skeleton-item variant="image" style="width: 80px; height: 80px;" />
+                          <div
+                            style="
+                            display: flex;
+                            align-items: center;
+                            justify-items: space-between;
+                            margin-left:92px;
+                            margin-top: -66px;
+                            height: 16px;
+                            margin-bottom:74px"
+                          >
+                            <el-skeleton-item variant="text" style="width:90px" />
+                            <el-skeleton-item variant="text" style="width:60px; margin-top:70px; margin-left:-90px" />
+                          </div>
+                        </div>
+                      </template>
+                      <template #default>
                 <el-row :gutter="0" v-for="(item, index) in display_chart" :key="index">
                     <router-link :to="'/music/' + item.musicId" style="display: flex; align-items: center; margin-bottom:24px">
                       <p style="margin-right: 10px; font-size: 20px; font-weight: bold;">{{index + 1}}</p>
                       <el-image
                         :src="'/api/Music/Cover/' + item.musicId"
                         style="width:80px; height: 80px"
-                        fit="cover"
-                      />
+                        fit="cover">
+                        <template #placeholder>
+                              <el-skeleton style="width: 80px" animated :count="1">
+                                <template #template>
+                                  <el-skeleton-item variant="image" style="width: 80px; height: 80px" />
+                                </template>
+                              </el-skeleton>
+                            </template>
+                          </el-image>
                       <div>
                       <p style="margin-left: 10px; font-size: 14px; font-weight: bold;">{{item.name}}</p>
                       <p style="margin-left: 10px; font-size: 14px;">{{item.users[0].nickname}}</p>
                       </div>
                     </router-link>
                 </el-row>
+              </template>
+                    </el-skeleton>
                 <router-link :to="{path: '/rank'}">
                     <p style="font-size: 14px; color: #888; text-align:center">查看更多</p>
                   </router-link>
