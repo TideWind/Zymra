@@ -66,6 +66,11 @@ let getSelfUserInfo = async () => {
 }
 
 let uploadUserInfo = async () => {
+  if(userInfo.value.userNickname == '' || userInfo.value.userDescribe == '')
+  {
+    ElMessage({message: '请将信息填写完整！', type: 'error',})
+    return false
+  }
   const form = reactive({
     nickname: userInfo.value.userNickname,
     describe: userInfo.value.userDescribe

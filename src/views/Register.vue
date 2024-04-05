@@ -50,21 +50,31 @@ const rules = {
     {required:true, message:'用户名不能为空', trigger:'change'},
     {required:true, message:'用户名不能为空', trigger:'blur'},
     {min:2, max:19, message:'用户名长度为2-19个字符', trigger:'change'},
-    {pattern:/^[a-zA-Z0-9!@#$%^&*()-_=+{}\[\]|;:'",.<>?~\\\/]*$/, message:'用户名只能由英文/数字/特殊符号组成', trigger:'change'}
+    {min:2, max:19, message:'用户名长度为2-19个字符', trigger:'blur'},
+    {pattern:/^[a-zA-Z0-9!@#$%^&*()-_=+{}\[\]|;:'",.<>?~\\\/]*$/, message:'用户名只能由英文/数字/特殊符号组成', trigger:'change'},
+    {pattern:/^[a-zA-Z0-9!@#$%^&*()-_=+{}\[\]|;:'",.<>?~\\\/]*$/, message:'用户名只能由英文/数字/特殊符号组成', trigger:'blur'}
   ],
   nickname:[
     {required:true, message:'昵称不能为空', trigger:'change'},
     {required:true, message:'昵称不能为空', trigger:'blur'},
     {min:2, max:19, message:'昵称长度为2-19个字符', trigger:'change'},
+    {min:2, max:19, message:'昵称长度为2-19个字符', trigger:'blur'}
   ],
   password: [
     { validator: validatePass, trigger: 'change' },
+    { validator: validatePass, trigger: 'blur' },
+    {required:true, message:'密码不能为空', trigger:'change'},
     {required:true, message:'密码不能为空', trigger:'blur'},
-    {min:6, max:19, message:'密码长度为6-19个字符', trigger:'change'}
+    {pattern:/^[a-zA-Z0-9!@#$%^&*()-_=+{}\[\]|;:'",.<>?~\\\/]*$/, message:'密码只能由英文/数字/特殊符号组成', trigger:'change'},
+    {pattern:/^[a-zA-Z0-9!@#$%^&*()-_=+{}\[\]|;:'",.<>?~\\\/]*$/, message:'密码只能由英文/数字/特殊符号组成', trigger:'blur'},
+    {min:6, max:19, message:'密码长度为6-19个字符', trigger:'change'},
+    {min:6, max:19, message:'密码长度为6-19个字符', trigger:'blur'}
   ],
   password_re: [
     { validator: validatePassRe, trigger: 'change' },
-    {required:true, message:'请再次输入密码', trigger:'blur'},
+    { validator: validatePassRe, trigger: 'blur' },
+    {required:true, message:'请再次输入密码', trigger:'change'},
+    {required:true, message:'请再次输入密码', trigger:'blur'}
   ]
 }
 

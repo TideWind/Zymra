@@ -18,7 +18,7 @@ let getSelfMusics = async () => {
   if (res.status == 200) {
     musics.value = res.data
     isMusicsLoad.value = true
-    //console.log(musics.value)
+    console.log(musics.value)
   }
 }
 
@@ -44,6 +44,7 @@ const activeTab = ref('all')
 
 const confirmDelete = (music_id) =>
 {
+  isMusicsLoad.value = false
   deleteMusic(music_id)
 }
 
@@ -127,8 +128,9 @@ let deleteMusic = async (music_id) => {
                         <div v-if="item.status == 0" style="display:inline-block; margin-top:40px;">
                           <span style="margin-left: -124px; font-size: 14px; color: #888">稿件审核中</span>
                         </div>
-                        <div v-if="item.status == 3" style="display:inline-block; margin-top:40px;">
+                        <div v-if="item.status == 2" style="display:inline-block; margin-top:40px;">
                           <span style="margin-left: -140px; font-size: 14px; color: red">稿件审核未通过</span>
+                          <p style="margin-top:0px; margin-left:-140px; font-size: 14px; color: red" plain>原因：{{ item.musicRefusedReasons[0].reason }}</p>
                         </div>
                     </el-row>
                   
@@ -359,6 +361,7 @@ let deleteMusic = async (music_id) => {
                         </el-popconfirm>
                           <div style="display:inline-block; margin-top:40px;">
                           <span style="margin-left: -140px; font-size: 14px; color: red">稿件审核未通过</span>
+                          <p style="margin-top:0px; margin-left:-140px; font-size: 14px; color: red" plain>原因：{{ item.musicRefusedReasons[0].reason }}</p>
                         </div>
                     </el-row>
                   

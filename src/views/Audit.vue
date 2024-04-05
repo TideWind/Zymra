@@ -75,10 +75,13 @@ const formatDateTime = (dateTimeString) => {
 const activeTab = ref('pending')
 
 const approveClick = (music_id) => {
+  isPendingMusicsLoad.value = false
   approveMusic(music_id)
 }
 
 const refuseClick = (music_id, reason) => {
+  isPendingMusicsLoad.value = false
+  isRefusedMusicsLoad.value = false
   refuseMusic(music_id, reason)
 }
 
@@ -224,7 +227,7 @@ let refuseMusic = async (music_id, reason) => {
                           
                         </el-col>
 
-                        <p style="margin-top:100px; margin-left:320px; width:80px; color:red; font-size:14px" plain>原因：{{ item.musicRefusedReasons[0].reason }}</p>
+                        <p style="margin-top:100px; margin-left:320px; width:300px; color:red; font-size:14px" plain>原因：{{ item.musicRefusedReasons[0].reason }}</p>
                         
                     </el-row>
                   
